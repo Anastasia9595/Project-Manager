@@ -1,0 +1,20 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "tui",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["dist/**"]
+    },
+    "lint": { "dependsOn": ["^lint"] },
+    "format": { "dependsOn": ["^format"] },
+    "typecheck": { "dependsOn": ["^typecheck"] },
+    "dev": { "cache": false, "persistent": true },
+    "start": {
+      "cache": false,
+      "persistent": true,
+      "passThroughEnv": ["HOST", "PORT", "DIRECTUS_URL", "DIRECTUS_TOKEN" ]
+    }
+  }
+}

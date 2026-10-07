@@ -1,0 +1,221 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/figtree";
+
+@custom-variant dark (&:is(.dark *));
+@source "../../../apps/**/*.{ts,tsx,astro}";
+@source "../../../components/**/*.{ts,tsx}";
+@source "../**/*.{ts,tsx}";
+
+@theme inline {
+    --font-heading: var(--font-sans);
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar: var(--sidebar);
+    --color-chart-5: var(--chart-5);
+    --color-chart-4: var(--chart-4);
+    --color-chart-3: var(--chart-3);
+    --color-chart-2: var(--chart-2);
+    --color-chart-1: var(--chart-1);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-destructive-tint: var(--destructive-tint);
+    --color-destructive-dark: var(--destructive-dark);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-destructive: var(--destructive);
+    --color-warning-tint: var(--warning-tint);
+    --color-warning-dark: var(--warning-dark);
+    --color-warning-foreground: var(--warning-foreground);
+    --color-warning: var(--warning);
+    --color-success-tint: var(--success-tint);
+    --color-success-dark: var(--success-dark);
+    --color-success-foreground: var(--success-foreground);
+    --color-success: var(--success);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-status-paused-tint: var(--status-paused-tint);
+    --color-status-paused: var(--status-paused);
+    --color-status-completed-tint: var(--status-completed-tint);
+    --color-status-completed: var(--status-completed);
+    --color-status-active-tint: var(--status-active-tint);
+    --color-status-active: var(--status-active);
+    --color-table-foreground: var(--table-foreground);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --color-foreground: var(--foreground);
+    --color-background: var(--background);
+    --color-surface: var(--surface);
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6);
+    --font-sans: 'Figtree Variable', sans-serif;
+
+}
+
+:root {
+    /* Seitenhintergrund -> Canvas */
+    --background: #FAF4F0;
+    /* Haupttextfarbe -> Strong Text */
+    --foreground: oklch(0.216 0.006 56.043);
+    /* Karten-Hintergrund -> White */
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.216 0.006 56.043);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.216 0.006 56.043);
+    /* CTAs / primäre Markenfarbe -> Brand Orange */
+    --primary: oklch(0.759 0.177 60.637);
+    --primary-foreground: oklch(0.182 0.06 274.499);
+    /* sekundärer Akzent, sehr hell -> Orange Tint */
+    --secondary: oklch(0.972 0.022 74.101);
+    --secondary-foreground: oklch(0.182 0.06 274.499);
+    /* deaktivierte Zustände / weiche Flächen -> Soft Neutral */
+    --muted: oklch(0.811 0.014 71.3);
+    --muted-foreground: oklch(0.444 0.01 73.639);
+    /* Text in Tabellenzellen (Design: #6F7182, 4.9:1 auf Weiß) */
+    --table-foreground: #6F7182;
+    /* Projekt-Status-Badges (Design): Text/Punkt + Tint-Hintergrund */
+    --status-active: #38A12B;
+    --status-active-tint: #E9FEE9;
+    --status-completed: #0023E7;
+    --status-completed-tint: #E7E9FD;
+    --status-paused: #E48126;
+    --status-paused-tint: #FEF5E8;
+    /* subtile Highlights / warme Flächen -> Soft Orange */
+    --accent: oklch(0.882 0.075 65.943);
+    --accent-foreground: oklch(0.182 0.06 274.499);
+    /* Fehlerzustand -> Error */
+    --destructive: oklch(0.577 0.215 27.325);
+    --destructive-foreground: oklch(1 0 0);
+    /* Text auf Error-Tint (A11y-Regel: immer *Dark*-Variante) */
+    --destructive-dark: oklch(0.505 0.19 27.518);
+    --destructive-tint: oklch(0.936 0.031 17.717);
+    /* Erfolgszustand -> Success (shadcn kennt diese Tokens standardmäßig nicht) */
+    --success: oklch(0.639 0.138 161.108);
+    --success-foreground: oklch(0.182 0.06 274.499);
+    --success-dark: oklch(0.527 0.137 150.069);
+    --success-tint: oklch(0.965 0.029 159.947);
+    /* Warnzustand -> Warning (ebenfalls neu ergänzt) */
+    --warning: oklch(0.769 0.165 70.08);
+    --warning-foreground: oklch(0.182 0.06 274.499);
+    --warning-dark: oklch(0.666 0.157 58.318);
+    --warning-tint: oklch(0.962 0.058 95.617);
+    /* Rahmen für Karten & Trennlinien -> Border Cool */
+    --border: oklch(0.939 0.012 281.077);
+    /* Rahmen für Grid-Trennlinien / Inputs -> Border Warm */
+    --input: oklch(0.959 0.007 80.721);
+    /* Fokus-Ring -> Highlight Orange */
+    --ring: oklch(0.802 0.171 73.267);
+    /* Chart-Reihe: Brand Orange, Highlight Orange, Success, Warning, Error */
+    --chart-1: oklch(0.759 0.177 60.637);
+    --chart-2: oklch(0.802 0.171 73.267);
+    --chart-3: oklch(0.639 0.138 161.108);
+    --chart-4: oklch(0.769 0.165 70.08);
+    --chart-5: oklch(0.577 0.215 27.325);
+    --radius: 0.625rem;
+    /* Sidebar-Tokens: ruhiger/neutraler als die Haupt-CTAs.
+       Sidebar = White, damit sie sich klar vom Canvas (--background) abhebt;
+       Hover/Active nutzen weiter den Orange Tint (--sidebar-accent). */
+    --sidebar: oklch(1 0 0);
+    --sidebar-foreground: oklch(0.216 0.006 56.043);
+    --sidebar-primary: oklch(0.759 0.177 60.637);
+    --sidebar-primary-foreground: oklch(0.182 0.06 274.499);
+    --sidebar-accent: oklch(0.972 0.022 74.101);
+    --sidebar-accent-foreground: oklch(0.182 0.06 274.499);
+    --sidebar-border: oklch(0.939 0.012 281.077);
+    --sidebar-ring: oklch(0.802 0.171 73.267);
+    /* auf Canvas abgestimmt (lag bereits sehr nah dran) */
+    --surface: oklch(0.985 0.001 106.423);
+}
+
+.dark {
+    /* Seitenhintergrund -> Ink */
+    --background: oklch(0.182 0.06 274.499);
+    /* Haupttextfarbe -> Canvas (18.06:1 auf Ink) */
+    --foreground: oklch(0.985 0.001 106.423);
+    /* Panel-Hintergrund: von Ink abgeleitet, etwas heller (#191D34, 15.87:1 für Text) */
+    --card: oklch(0.24 0.045 274.499);
+    --card-foreground: oklch(0.985 0.001 106.423);
+    --popover: oklch(0.24 0.045 274.499);
+    --popover-foreground: oklch(0.985 0.001 106.423);
+    /* Brand Orange bleibt der Akzent, springt auf dunklem Grund gut hervor */
+    --primary: oklch(0.759 0.177 60.637);
+    --primary-foreground: oklch(0.182 0.06 274.499);
+    /* dunkles Sekundär-Panel, von Ink abgeleitet (#23273D) */
+    --secondary: oklch(0.28 0.04 274.499);
+    --secondary-foreground: oklch(0.985 0.001 106.423);
+    --muted: oklch(0.32 0.035 274.499);
+    --muted-foreground: oklch(0.716 0.009 56.259);
+    /* #6F7182 hätte auf Ink nur ~3.5:1 - im Dark Mode daher heller */
+    --table-foreground: oklch(0.716 0.009 56.259);
+    /* Projekt-Status-Badges (Design): Text/Punkt + Tint-Hintergrund */
+    --status-active: #38A12B;
+    --status-active-tint: #E9FEE9;
+    --status-completed: #0023E7;
+    --status-completed-tint: #E7E9FD;
+    --status-paused: #E48126;
+    --status-paused-tint: #FEF5E8;
+    /* abgedunkelte Orange-Fläche für Akzente auf dunklem Grund (#432609) */
+    --accent: oklch(0.3 0.06 60.637);
+    --accent-foreground: oklch(0.882 0.075 65.943);
+    /* Error-Basis (#DC2626) erreicht auf Ink nur 3.91:1 (< 4.5:1) - für Text/Icons
+       im Dark Mode daher aufgehellte Variante, analog zu shadcn's eigenem
+       Default-Dark-Theme (dort wird --destructive ebenfalls fürs Dark Theme
+       aufgehellt). Für Flächen (Buttons/Badges) weiterhin --destructive verwenden. */
+    --destructive: oklch(0.66 0.19 27.325);
+    --destructive-foreground: oklch(0.182 0.06 274.499);
+    --destructive-dark: oklch(0.505 0.19 27.518);
+    --destructive-tint: oklch(0.936 0.031 17.717);
+    /* Success/Warning-Basis bestehen bereits mit >=5.9:1 auf Ink, keine Anpassung nötig */
+    --success: oklch(0.639 0.138 161.108);
+    --success-foreground: oklch(0.182 0.06 274.499);
+    --success-dark: oklch(0.527 0.137 150.069);
+    --success-tint: oklch(0.965 0.029 159.947);
+    --warning: oklch(0.769 0.165 70.08);
+    --warning-foreground: oklch(0.182 0.06 274.499);
+    --warning-dark: oklch(0.666 0.157 58.318);
+    --warning-tint: oklch(0.962 0.058 95.617);
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.802 0.171 73.267);
+    --chart-1: oklch(0.759 0.177 60.637);
+    --chart-2: oklch(0.802 0.171 73.267);
+    --chart-3: oklch(0.639 0.138 161.108);
+    --chart-4: oklch(0.769 0.165 70.08);
+    --chart-5: oklch(0.66 0.19 27.325);
+    --sidebar: oklch(0.24 0.045 274.499);
+    --sidebar-foreground: oklch(0.985 0.001 106.423);
+    --sidebar-primary: oklch(0.759 0.177 60.637);
+    --sidebar-primary-foreground: oklch(0.182 0.06 274.499);
+    --sidebar-accent: oklch(0.32 0.035 274.499);
+    --sidebar-accent-foreground: oklch(0.985 0.001 106.423);
+    --sidebar-border: oklch(1 0 0 / 10%);
+    --sidebar-ring: oklch(0.802 0.171 73.267);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    }
+  body {
+    @apply bg-background text-foreground;
+    }
+}

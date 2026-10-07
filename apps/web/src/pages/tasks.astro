@@ -1,0 +1,14 @@
+---
+import AppLayout from "@/layouts/app.astro"
+import { getDictionary } from "@/i18n"
+import { TasksPage } from "@/components/tasks/tasks-page"
+
+const locale = Astro.currentLocale ?? "de"
+const dict = getDictionary(locale)
+---
+
+<AppLayout title={dict.sidebar.tasks}>
+  <div class="p-6">
+    <TasksPage client:load locale={locale} />
+  </div>
+</AppLayout>

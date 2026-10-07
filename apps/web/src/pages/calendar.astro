@@ -1,0 +1,12 @@
+---
+import AppLayout from "@/layouts/app.astro"
+import { getDictionary } from "@/i18n"
+
+const dict = getDictionary(Astro.currentLocale ?? "de")
+---
+
+<AppLayout title={dict.sidebar.calendar}>
+  <div class="p-6">
+    <h1 class="text-2xl font-bold text-foreground">{dict.sidebar.calendar}</h1>
+  </div>
+</AppLayout>

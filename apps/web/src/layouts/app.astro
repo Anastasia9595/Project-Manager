@@ -1,0 +1,20 @@
+---
+import { SidebarLayout } from "@/components/layout/sidebar-layout"
+import Base from "@/layouts/base.astro"
+
+interface Props {
+  title?: string
+}
+
+const { title } = Astro.props
+const locale = Astro.currentLocale ?? "de"
+const user = Astro.locals.user!
+---
+
+<Base title={title}>
+  <SidebarLayout client:load locale={locale} user={user} currentPath={Astro.url.pathname}>
+    <div class="mx-auto w-full max-w-[1600px]">
+      <slot />
+    </div>
+  </SidebarLayout>
+</Base>

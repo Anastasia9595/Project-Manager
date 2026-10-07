@@ -1,0 +1,12 @@
+---
+import Base from "@/layouts/base.astro"
+import { LoginForm } from "@/components/auth/login-form"
+
+const locale = Astro.currentLocale ?? "de"
+---
+
+<Base>
+  <main class="flex min-h-screen items-center justify-center bg-surface p-6">
+    <LoginForm client:load locale={locale} />
+  </main>
+</Base>

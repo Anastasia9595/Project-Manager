@@ -1,0 +1,27 @@
+---
+import AppLayout from "@/layouts/app.astro"
+import { getDictionary } from "@/i18n"
+import { getRequestSession } from "@/lib/auth/request-session"
+import { fetchProfile } from "@/lib/profile"
+import { ProfileSettingsPage } from "@/components/settings/profile-settings-page"
+
+const dict = getDictionary(Astro.currentLocale ?? "de")
+const session = getRequestSession(Astro.cookies, Astro.locals)
+if (!session) {
+  return Astro.redirect("/login")
+}
+
+const fetchedProfile = await fetchProfile(session.tokens.accessToken)
+
+const profile = { ...fetchedProfile, avatarId: session.user.avatarId }
+---
+
+<AppLayout title={dict.sidebar.settings}>
+  <div class="p-6">
+    <ProfileSettingsPage
+      client:load
+      profile={profile}
+      locale={Astro.currentLocale}
+    />
+  </div>
+</AppLayout>

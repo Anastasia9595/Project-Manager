@@ -1,0 +1,26 @@
+---
+import AppLayout from "@/layouts/app.astro"
+import { getDictionary } from "@/i18n"
+import { CustomerContactDetailPage } from "@/components/customer-contacts/customer-contact-detail-page"
+import { DUMMY_CUSTOMER_CONTACTS } from "@/dummy-data/customer-contacts"
+
+// TODO: durch Directus-Abfrage ersetzen (siehe dummy-data/customer-contacts.ts).
+const contact = DUMMY_CUSTOMER_CONTACTS.find(
+  (item) => item.id === Astro.params.id
+)
+if (!contact) {
+  return new Response(null, { status: 404 })
+}
+
+const dict = getDictionary(Astro.currentLocale ?? "de")
+---
+
+<AppLayout title={`${contact.customer} – ${dict.sidebar.companyProfile}`}>
+  <div class="p-6">
+    <CustomerContactDetailPage
+      client:load
+      contact={contact}
+      locale={Astro.currentLocale}
+    />
+  </div>
+</AppLayout>

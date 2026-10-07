@@ -1,0 +1,40 @@
+---
+import AppLayout from "@/layouts/app.astro"
+import { ProjectStats } from "@/components/dashboard/project-stats/project-stats"
+import { ProjectsTable } from "@/components/dashboard/projects/projects-table"
+import { MyTasks } from "@/components/dashboard/my-tasks/my-tasks"
+import { WeeklyWorkTime } from "@/components/dashboard/work-time/weekly-work-time"
+import { CustomerContactsTable } from "@/components/dashboard/customer-contacts/customer-contacts-table"
+import { getDictionary } from "@/i18n"
+
+const locale = Astro.currentLocale ?? "de"
+const user = Astro.locals.user!
+const dict = getDictionary(locale)
+---
+
+<AppLayout>
+  <div class="flex flex-col gap-6 p-6">
+    <h1 class="text-2xl font-bold text-foreground">
+      {locale === "de" ? `Willkommen, ${user.name}` : `Welcome, ${user.name}`}
+    </h1>
+    <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22.5rem]">
+      <div class="flex min-w-0 flex-col gap-6">
+        <ProjectStats client:load />
+        <ProjectsTable client:load title={dict.dashboard.myProjects.title} />
+      </div>
+      <div class="relative">
+        <MyTasks client:load className="lg:absolute lg:inset-0" />
+      </div>
+    </div>
+    <div class="@container">
+      <div class="grid gap-6 @4xl:grid-cols-2">
+        <WeeklyWorkTime />
+        <CustomerContactsTable
+          client:load
+          compact
+          title={dict.dashboard.customerContacts.title}
+        />
+      </div>
+    </div>
+  </div>
+</AppLayout>

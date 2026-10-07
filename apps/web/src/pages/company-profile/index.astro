@@ -1,0 +1,13 @@
+---
+import AppLayout from "@/layouts/app.astro"
+import { getDictionary } from "@/i18n"
+import { CustomerContactsPage } from "@/components/customer-contacts/customer-contacts-page"
+
+const dict = getDictionary(Astro.currentLocale ?? "de")
+---
+
+<AppLayout title={dict.sidebar.companyProfile}>
+  <div class="p-6">
+    <CustomerContactsPage client:load locale={Astro.currentLocale} />
+  </div>
+</AppLayout>
