@@ -14,6 +14,8 @@ type DummyTaskSpec = {
   dueInDays: number
   /** Erfasste Zeiten als [Tage zurück, Minuten]. */
   entries: [daysAgo: number, minutes: number][]
+  /** Erledigt vor X Tagen; ohne Angabe ist die Aufgabe offen. */
+  completedDaysAgo?: number
 }
 
 const SPECS: DummyTaskSpec[] = [
@@ -138,6 +140,36 @@ const SPECS: DummyTaskSpec[] = [
     dueInDays: 7,
     entries: [[5, 40]],
   },
+  {
+    title: "Briefing & Freigabe",
+    projectIndex: 0,
+    priority: "high",
+    dueInDays: 1,
+    entries: [],
+    completedDaysAgo: 2,
+  },
+  {
+    title: "Reinzeichnung",
+    projectIndex: 2,
+    priority: "medium",
+    dueInDays: -5,
+    entries: [],
+    completedDaysAgo: 6,
+  },
+  {
+    title: "Satz & Layout Prospekt",
+    projectIndex: 5,
+    priority: "high",
+    dueInDays: 0,
+    entries: [[0, 75]],
+  },
+  {
+    title: "Bildbearbeitung",
+    projectIndex: 1,
+    priority: "medium",
+    dueInDays: 3,
+    entries: [[1, 50]],
+  },
 ]
 
 function createEntries(
@@ -160,11 +192,16 @@ function createDummyTrackedTasks(today: Date): TrackedTask[] {
     return {
       id,
       title: spec.title,
+      projectId: project.id,
       projectName: project.name,
       customer: project.customer,
       priority: spec.priority,
       dueDate: addDays(today, spec.dueInDays),
-      done: false,
+      done: spec.completedDaysAgo !== undefined,
+      completedAt:
+        spec.completedDaysAgo === undefined
+          ? undefined
+          : addDays(today, -spec.completedDaysAgo),
       timeEntries: createEntries(id, today, spec.entries),
     }
   })

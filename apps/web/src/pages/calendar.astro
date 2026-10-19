@@ -1,12 +1,14 @@
 ---
 import AppLayout from "@/layouts/app.astro"
 import { getDictionary } from "@/i18n"
+import { CalendarPage } from "@/components/calendar/calendar-page"
 
-const dict = getDictionary(Astro.currentLocale ?? "de")
+const locale = Astro.currentLocale ?? "de"
+const dict = getDictionary(locale)
 ---
 
 <AppLayout title={dict.sidebar.calendar}>
   <div class="p-6">
-    <h1 class="text-2xl font-bold text-foreground">{dict.sidebar.calendar}</h1>
+    <CalendarPage client:load locale={locale} />
   </div>
 </AppLayout>

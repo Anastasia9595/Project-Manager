@@ -7,6 +7,8 @@ export type Task = {
   priority: TaskPriority
   dueDate: Date
   done: boolean
+  /** Zeitpunkt des Abhakens - nur bei erledigten Aufgaben gesetzt. */
+  completedAt?: Date
 }
 
 export type TimeEntry = {
@@ -17,6 +19,8 @@ export type TimeEntry = {
 
 /** Aufgabe mit Kunde und Zeiterfassung - Grundlage der Aufgaben-Seite. */
 export type TrackedTask = Task & {
+  /** Verweis auf `Project.id` (in Directus: Relation `project`). */
+  projectId: string
   customer: string
   timeEntries: TimeEntry[]
 }

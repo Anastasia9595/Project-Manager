@@ -10,6 +10,8 @@ const DAY_MONTH_FORMATTER = new Intl.DateTimeFormat("de-DE", {
   month: "2-digit",
 })
 
+export const DAYS_PER_WEEK = 7
+
 export function addDays(date: Date, days: number): Date {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days)
 }
@@ -35,7 +37,9 @@ export function startOfWeek(date: Date): Date {
 
 /** Die 7 Tage (Mo-So) ab dem Montag `weekStart`. */
 export function getWeekDays(weekStart: Date): Date[] {
-  return Array.from({ length: 7 }, (_, index) => addDays(weekStart, index))
+  return Array.from({ length: DAYS_PER_WEEK }, (_, index) =>
+    addDays(weekStart, index)
+  )
 }
 
 export function formatWeekdayShort(date: Date): string {
@@ -46,7 +50,33 @@ export function formatMonthYear(date: Date): string {
   return MONTH_YEAR_FORMATTER.format(date)
 }
 
+/** z.B. "01.09." */
+export function formatDayMonth(date: Date): string {
+  return DAY_MONTH_FORMATTER.format(date)
+}
+
 /** z.B. "Mo, 01.09." */
 export function formatDayLabel(date: Date): string {
-  return `${formatWeekdayShort(date)}, ${DAY_MONTH_FORMATTER.format(date)}`
+  return `${formatWeekdayShort(date)}, ${formatDayMonth(date)}`
+}
+
+/** Mo-Fr: Anzahl der Arbeitstage ab dem Wochenstart. */
+export const WORKDAYS_PER_WEEK = 5
+
+/** Die 5 Arbeitstage (Mo-Fr) ab dem Montag `weekStart`. */
+export function getWorkweekDays(weekStart: Date): Date[] {
+  return getWeekDays(weekStart).slice(0, WORKDAYS_PER_WEEK)
+}
+
+/** Schlüssel eines Kalendertags in Ortszeit, z.B. "2026-10-05". */
+export function toDayKey(date: Date): string {
+  const month = String(date.getMonth() + 1).padStart(2, "0")
+  const day = String(date.getDate()).padStart(2, "0")
+  return `${date.getFullYear()}-${month}-${day}`
+}
+
+/** Gegenstück zu `toDayKey`: "2026-10-05" -> 5. Okt. 2026, 00:00 Uhr Ortszeit. */
+export function parseDayKey(key: string): Date {
+  const [year, month, day] = key.split("-").map(Number)
+  return new Date(year!, month! - 1, day!)
 }

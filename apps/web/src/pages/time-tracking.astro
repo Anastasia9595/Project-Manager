@@ -1,12 +1,29 @@
 ---
 import AppLayout from "@/layouts/app.astro"
 import { getDictionary } from "@/i18n"
+import TimeTrackingHeader from "@/components/time-tracking/time-tracking-header.astro"
+import { TimeTrackingWorkspace } from "@/components/time-tracking/time-tracking-workspace"
+import { WeekNavigation } from "@/components/time-tracking/week-navigation"
+import { WEEK_PARAM } from "@/lib/time-tracking/week-param"
 
-const dict = getDictionary(Astro.currentLocale ?? "de")
+const locale = Astro.currentLocale ?? "de"
+const dict = getDictionary(locale)
+const labels = dict.timeTrackingPage
+// Woche aus `?week=2026-W42` – ungültige Werte zeigen die aktuelle Woche.
+const initialWeek = Astro.url.searchParams.get(WEEK_PARAM)
+const user = Astro.locals.user!
 ---
 
 <AppLayout title={dict.sidebar.timeTracking}>
-  <div class="p-6">
-    <h1 class="text-2xl font-bold text-foreground">{dict.sidebar.timeTracking}</h1>
+  <div class="flex flex-col gap-6 px-6 pb-6">
+    <TimeTrackingHeader title={labels.title} subtitle={labels.subtitle}>
+      <WeekNavigation client:load locale={locale} initialWeek={initialWeek} />
+    </TimeTrackingHeader>
+    <TimeTrackingWorkspace
+      client:load
+      locale={locale}
+      initialWeek={initialWeek}
+      userId={user.id}
+    />
   </div>
 </AppLayout>
