@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react"
 
+/** Aktualisierungsintervall für Anzeigen, die nur die Uhrzeit auf die Minute brauchen. */
+export const MINUTE_MS = 60_000
+
 /** Aktueller Zeitstempel, der alle `intervalMs` Millisekunden neu gesetzt wird. */
 export function useNow(intervalMs: number): number {
   const [now, setNow] = useState(() => Date.now())

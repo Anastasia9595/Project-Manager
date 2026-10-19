@@ -1,3 +1,4 @@
+import { addDays } from "@/lib/week"
 import type { Project } from "@/models/project"
 
 // TODO: durch Directus-Daten ersetzen (z.B. per `readItems("projects", ...)`).
@@ -7,6 +8,7 @@ import type { Project } from "@/models/project"
 export const DUMMY_PROJECTS: Project[] = [
   {
     id: "1",
+    title: "Weser Wohnwelt – Landingpage 40 Nachrichten",
     name: "WeWo_1925-2225_Landingpage_40-Nachrichten",
     status: "active",
     palDate: new Date(2026, 8, 15),
@@ -14,10 +16,10 @@ export const DUMMY_PROJECTS: Project[] = [
     customer: "Weser Wohnwelt",
     progress: { done: 6, total: 7 },
     circulation: 40000,
-
   },
   {
     id: "2",
+    title: "Weser Wohnwelt – Zusteller-Langkarte",
     name: "WeWo_4326_Zusteller-Langkarte_Moebelhaus",
     status: "active",
     palDate: new Date(2026, 8, 16),
@@ -28,16 +30,18 @@ export const DUMMY_PROJECTS: Project[] = [
   },
   {
     id: "3",
+    title: "Wallach – Anzeige Gutscheine",
     name: "Wallach_5226_Anzeige_Gutscheine_12-2026",
     status: "active",
     palDate: new Date(2026, 8, 18),
     dataHandoverDate: new Date(2026, 8, 16),
     customer: "Wallach Möbelhaus",
     progress: { done: 2, total: 7 },
-    circulation: 30000, 
+    circulation: 30000,
   },
   {
     id: "4",
+    title: "Möbelzentrum – Außenbanner",
     name: "MZG_3826_Aussenbanner_noch_5_Minuten",
     status: "created",
     palDate: new Date(2026, 8, 28),
@@ -48,6 +52,7 @@ export const DUMMY_PROJECTS: Project[] = [
   },
   {
     id: "5",
+    title: "Wohn Schick – Wandkonzept Eigenmarke",
     name: "WohnSchick_3726_Wandkonzept_Eigenmarke",
     status: "completed",
     palDate: new Date(2026, 9, 2),
@@ -55,5 +60,74 @@ export const DUMMY_PROJECTS: Project[] = [
     customer: "Wohn Schick",
     progress: { done: 0, total: 7 },
     circulation: 20000,
+  },
+  {
+    id: "6",
+    title: "Wallach – Prospekt Herbstaktion",
+    name: "Moebelhaus_Wallach_Prospekt_Herbstaktion_2026",
+    status: "active",
+    // Liegt immer auf "heute", damit der Kalender ein laufendes Projekt zeigt.
+    palDate: addDays(new Date(), 0),
+    dataHandoverDate: addDays(new Date(), -2),
+    customer: "Wallach Möbelhaus",
+    progress: { done: 5, total: 8 },
+    circulation: 45000,
+  },
+  // Weitere laufende Projekte relativ zu heute, damit der aktuelle Monat
+  // alle Fußzeilen-Varianten (überfällig, morgen, in 2 Tagen, später) zeigt.
+  {
+    id: "7",
+    title: "Weser Wohnwelt – Beilage Winterkatalog",
+    name: "WeWo_4426_Beilage_Winterkatalog",
+    status: "active",
+    palDate: addDays(new Date(), -4),
+    dataHandoverDate: addDays(new Date(), -6),
+    customer: "Weser Wohnwelt",
+    progress: { done: 3, total: 7 },
+    circulation: 50000,
+  },
+  {
+    id: "8",
+    title: "Möbelzentrum – Plakat Jubiläum",
+    name: "MZG_3926_Plakat_Jubilaeum",
+    status: "active",
+    palDate: addDays(new Date(), 1),
+    dataHandoverDate: addDays(new Date(), -1),
+    customer: "Möbelzentrum Großräsche",
+    progress: { done: 6, total: 7 },
+    circulation: 15000,
+  },
+  {
+    id: "9",
+    title: "Wohn Schick – Social-Media-Kampagne",
+    name: "WohnSchick_3826_Social-Media-Kampagne_Wohnwelten_Herbst-Winter",
+    status: "active",
+    palDate: addDays(new Date(), 2),
+    dataHandoverDate: addDays(new Date(), 0),
+    customer: "Wohn Schick",
+    progress: { done: 0, total: 7 },
+    circulation: 10000,
+  },
+  {
+    id: "10",
+    title: "Wallach – Mailing Weihnachten",
+    name: "Wallach_5326_Mailing_Weihnachten",
+    status: "active",
+    palDate: addDays(new Date(), 6),
+    dataHandoverDate: addDays(new Date(), 4),
+    customer: "Wallach Möbelhaus",
+    progress: { done: 2, total: 8 },
+    circulation: 60000,
+  },
+  {
+    id: "11",
+    title: "Weser Wohnwelt – Anzeige Neueröffnung",
+    name: "WeWo_4526_Anzeige_Neueroeffnung",
+    status: "active",
+    palDate: addDays(new Date(), 9),
+    dataHandoverDate: addDays(new Date(), 7),
+    customer: "Weser Wohnwelt",
+    progress: { done: 1, total: 6 },
+    circulation: 25000,
   },
 ]

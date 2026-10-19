@@ -34,6 +34,9 @@
     --color-warning-dark: var(--warning-dark);
     --color-warning-foreground: var(--warning-foreground);
     --color-warning: var(--warning);
+    --color-due-today: var(--due-today);
+    --color-due-soon: var(--due-soon);
+    --color-warning-on-tint: var(--warning-on-tint);
     --color-success-tint: var(--success-tint);
     --color-success-dark: var(--success-dark);
     --color-success-foreground: var(--success-foreground);
@@ -53,6 +56,7 @@
     --color-secondary: var(--secondary);
     --color-primary-foreground: var(--primary-foreground);
     --color-primary: var(--primary);
+    --color-primary-foreground-inverse: var(--primary-foreground-inverse);
     --color-popover-foreground: var(--popover-foreground);
     --color-popover: var(--popover);
     --color-card-foreground: var(--card-foreground);
@@ -84,6 +88,9 @@
     /* CTAs / primäre Markenfarbe -> Brand Orange */
     --primary: oklch(0.759 0.177 60.637);
     --primary-foreground: oklch(0.182 0.06 274.499);
+    /* Weiße Schrift auf Brand Orange (Designentscheidung; Kontrast ~2.3:1,
+       unter WCAG AA - für Fließtext weiter --primary-foreground nutzen). */
+    --primary-foreground-inverse: oklch(1 0 0);
     /* sekundärer Akzent, sehr hell -> Orange Tint */
     --secondary: oklch(0.972 0.022 74.101);
     --secondary-foreground: oklch(0.182 0.06 274.499);
@@ -118,6 +125,13 @@
     --warning-foreground: oklch(0.182 0.06 274.499);
     --warning-dark: oklch(0.666 0.157 58.318);
     --warning-tint: oklch(0.962 0.058 95.617);
+    /* Fälligkeits-Texte im Kalender: --primary (2.3:1) und --warning-dark (3.2:1)
+       sind für Text auf Weiß zu hell -> abgedunkelt auf >=4.5:1 (WCAG AA).
+       Orange "heute" 5.15:1, Amber "bald" 5.38:1 auf Weiß / 4.84:1 auf --warning-tint. */
+    --due-today: oklch(0.55 0.16 50);
+    --due-soon: oklch(0.53 0.12 75);
+    /* Text auf --warning-tint (--warning-dark erreicht dort nur 2.9:1) -> 4.84:1 */
+    --warning-on-tint: oklch(0.53 0.12 75);
     /* Rahmen für Karten & Trennlinien -> Border Cool */
     --border: oklch(0.939 0.012 281.077);
     /* Rahmen für Grid-Trennlinien / Inputs -> Border Warm */
@@ -159,6 +173,7 @@
     /* Brand Orange bleibt der Akzent, springt auf dunklem Grund gut hervor */
     --primary: oklch(0.759 0.177 60.637);
     --primary-foreground: oklch(0.182 0.06 274.499);
+    --primary-foreground-inverse: oklch(1 0 0);
     /* dunkles Sekundär-Panel, von Ink abgeleitet (#23273D) */
     --secondary: oklch(0.28 0.04 274.499);
     --secondary-foreground: oklch(0.985 0.001 106.423);
@@ -193,6 +208,11 @@
     --warning-foreground: oklch(0.182 0.06 274.499);
     --warning-dark: oklch(0.666 0.157 58.318);
     --warning-tint: oklch(0.962 0.058 95.617);
+    /* auf --card aufgehellt: 7.9:1 bzw. 9.4:1 */
+    --due-today: oklch(0.78 0.15 55);
+    --due-soon: oklch(0.82 0.13 80);
+    /* Tint bleibt im Dark Mode hell -> Text bleibt dunkel */
+    --warning-on-tint: oklch(0.53 0.12 75);
     --border: oklch(1 0 0 / 10%);
     --input: oklch(1 0 0 / 15%);
     --ring: oklch(0.802 0.171 73.267);

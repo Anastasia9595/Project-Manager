@@ -90,7 +90,8 @@ const baseColumns: ColumnDef<Project, unknown>[] = [
       const percent = total === 0 ? 0 : (done / total) * 100
       return (
         <div className="flex items-center gap-3">
-          <Progress value={percent} className="w-full" />
+          {/* Feste Sprache, damit Server und Browser denselben aria-valuetext erzeugen. */}
+          <Progress value={percent} locale="de-DE" className="w-full" />
           <span className="text-sm tabular-nums">
             {done}/{total}
           </span>

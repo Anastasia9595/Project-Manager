@@ -4,6 +4,10 @@ import tailwindcss from "@tailwindcss/vite"
 import { defineConfig } from "astro/config"
 import react from "@astrojs/react"
 import node from '@astrojs/node';
+import { applyAppTimeZone } from "./src/lib/time-zone"
+
+// Dev-Server und Build: dieselbe Zeitzone wie der Produktionsserver (siehe middleware.ts).
+applyAppTimeZone()
 
 try {
   process.loadEnvFile()

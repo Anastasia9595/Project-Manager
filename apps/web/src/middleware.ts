@@ -1,3 +1,5 @@
+// Muss der erste Import bleiben (siehe time-zone-setup.ts).
+import "@/lib/time-zone-setup"
 import { defineMiddleware } from "astro:middleware"
 import { isDirectusError, readMe, refresh } from "@directus/sdk"
 

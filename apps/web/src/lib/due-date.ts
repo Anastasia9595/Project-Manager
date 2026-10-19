@@ -11,8 +11,13 @@ function startOfDay(date: Date): number {
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000
 
+/** Differenz in Kalendertagen (`date` minus `today`), unabhängig von Uhrzeit und Sommerzeit. */
+export function diffInCalendarDays(date: Date, today: Date): number {
+  return Math.round((startOfDay(date) - startOfDay(today)) / MS_PER_DAY)
+}
+
 export function getDueInfo(date: Date, today: Date = new Date()): DueInfo {
-  const diffDays = Math.round((startOfDay(date) - startOfDay(today)) / MS_PER_DAY)
+  const diffDays = diffInCalendarDays(date, today)
 
   if (diffDays < 0) {
     return { label: `${Math.abs(diffDays)} Tage überfällig`, tone: "overdue" }
@@ -38,7 +43,7 @@ export function formatShortDate(date: Date): string {
  * überfällig -> "vor 3 Tagen", heute -> "heute", später -> Datum.
  */
 export function getRelativeDueInfo(date: Date, today: Date = new Date()): DueInfo {
-  const diffDays = Math.round((startOfDay(date) - startOfDay(today)) / MS_PER_DAY)
+  const diffDays = diffInCalendarDays(date, today)
 
   if (diffDays < 0) {
     const days = Math.abs(diffDays)
