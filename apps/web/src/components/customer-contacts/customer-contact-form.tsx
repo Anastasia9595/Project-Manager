@@ -20,7 +20,6 @@ import { Textarea } from "@workspace/ui/components/textarea"
 
 import { FormField, FormGrid } from "@/components/settings/form-field"
 import { SettingsInput } from "@/components/settings/settings-input"
-import { useSaveRequest } from "@/hooks/use-save-request"
 import type { Dictionary } from "@/i18n"
 import {
   EMPTY_CUSTOMER_CONTACT_VALUES,
@@ -29,6 +28,7 @@ import {
   type CustomerContactValues,
 } from "@/lib/customer-contact-form/fields"
 import type { ContactOptions } from "@/lib/customer-contact-form/repository"
+import { submitCustomerContact } from "@/lib/customer-contact-form/submit"
 import {
   MAX_LENGTH,
   type ContactValidationCode,
@@ -101,10 +101,12 @@ function CustomerContactFormBody({
   })
   const [optionsAttempt, setOptionsAttempt] = useState(0)
   const [focusRequest, setFocusRequest] = useState(0)
-  const { status, send } = useSaveRequest("/api/customer-contacts", "POST")
+  const [saving, setSaving] = useState(false)
+  /** Fehlercode der API nach einem fehlgeschlagenen Speichern; `null`, wenn es keinen gibt. */
+  const [submitError, setSubmitError] = useState<string | null>(null)
   const formRef = useRef<HTMLFormElement>(null)
+  const activeLabelId = useId()
   const activeHintId = useId()
-  const saving = status.state === "saving"
 
   useEffect(() => {
     const controller = new AbortController()
@@ -204,8 +206,34 @@ function CustomerContactFormBody({
       return
     }
 
-    if (await send(values)) {
+    setSubmitError(null)
+    setSaving(true)
+    const result = await submitCustomerContact(values)
+    setSaving(false)
+
+    if (result.ok) {
       onCreated(getFullName(values.firstName.trim(), values.lastName.trim()))
+      return
+    }
+    // Lehnt der Server Felder ab, die der Browser durchgelassen hat, erscheinen sie am Feld.
+    if (result.error === "invalid_fields" && result.fields) {
+      setErrors(result.fields)
+      setFocusRequest((request) => request + 1)
+      return
+    }
+    setSubmitError(result.error)
+  }
+
+  const submitErrorMessage = (code: string) => {
+    switch (code) {
+      case "unauthorized":
+        return t.sessionExpired
+      case "forbidden":
+        return t.forbidden
+      case "invalid_location":
+        return t.invalidLocation
+      default:
+        return t.saveError
     }
   }
 
@@ -341,7 +369,9 @@ function CustomerContactFormBody({
             </FormField>
             <label className="flex cursor-pointer items-center justify-between gap-4 rounded-2xl border border-input bg-input/30 px-4 py-3 sm:col-span-2">
               <span className="flex flex-col gap-1">
-                <span className="text-sm font-semibold">{t.isActive}</span>
+                <span id={activeLabelId} className="text-sm font-semibold">
+                  {t.isActive}
+                </span>
                 <span
                   id={activeHintId}
                   className="text-xs text-muted-foreground"
@@ -352,6 +382,7 @@ function CustomerContactFormBody({
               <Switch
                 checked={values.isActive}
                 onCheckedChange={(checked) => setField("isActive", checked)}
+                aria-labelledby={activeLabelId}
                 aria-describedby={activeHintId}
               />
             </label>
@@ -430,9 +461,9 @@ function CustomerContactFormBody({
       </div>
 
       <div className="mt-4 flex items-center justify-end gap-3 border-t border-border px-8 py-4">
-        {status.state === "error" && (
+        {submitError && (
           <p role="alert" className="mr-auto text-sm text-destructive">
-            {status.code === "forbidden" ? t.forbidden : t.saveError}
+            {submitErrorMessage(submitError)}
           </p>
         )}
         <DialogClose

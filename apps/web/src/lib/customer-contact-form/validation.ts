@@ -28,17 +28,18 @@ export type ContactValidationErrors = Partial<
   >
 >
 
+// Die Längen werden am Rohwert gemessen, genau wie das maxLength-Attribut der Eingabefelder,
+// damit Browser und Server an der Grenze zum gleichen Ergebnis kommen.
+
 function checkName(value: string): ContactValidationCode | undefined {
-  const trimmed = value.trim()
-  if (!trimmed) return "required"
-  if (trimmed.length > MAX_LENGTH.name) return "tooLong"
+  if (!value.trim()) return "required"
+  if (value.length > MAX_LENGTH.name) return "tooLong"
 }
 
 function checkPhone(value: string): ContactValidationCode | undefined {
-  const trimmed = value.trim()
-  if (!trimmed) return undefined
-  if (trimmed.length > MAX_LENGTH.phone) return "tooLong"
-  if (!isValidPhone(trimmed)) return "invalidPhone"
+  if (!value.trim()) return undefined
+  if (value.length > MAX_LENGTH.phone) return "tooLong"
+  if (!isValidPhone(value)) return "invalidPhone"
 }
 
 /** Wird im Browser und in der API-Route genutzt. */
@@ -53,16 +54,17 @@ export function validateCustomerContact(
   if (lastName) errors.lastName = lastName
   if (!values.tenantId.trim()) errors.tenantId = "required"
 
-  const email = values.email.trim()
-  if (email.length > MAX_LENGTH.email) errors.email = "tooLong"
-  else if (email && !isValidEmail(email)) errors.email = "invalidEmail"
+  if (values.email.length > MAX_LENGTH.email) errors.email = "tooLong"
+  else if (values.email.trim() && !isValidEmail(values.email)) {
+    errors.email = "invalidEmail"
+  }
 
   const phone = checkPhone(values.phone)
   if (phone) errors.phone = phone
   const mobile = checkPhone(values.mobile)
   if (mobile) errors.mobile = mobile
 
-  if (values.notes.trim().length > MAX_LENGTH.notes) errors.notes = "tooLong"
+  if (values.notes.length > MAX_LENGTH.notes) errors.notes = "tooLong"
 
   return errors
 }

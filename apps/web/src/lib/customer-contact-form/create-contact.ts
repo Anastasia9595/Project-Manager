@@ -1,5 +1,8 @@
 import { isCustomerContactValues } from "@/lib/customer-contact-form/fields"
-import { toErrorResponse } from "@/lib/customer-contact-form/error-response"
+import {
+  getDirectusStatus,
+  toErrorResponse,
+} from "@/lib/customer-contact-form/error-response"
 import {
   createTenantUser,
   fetchLocationTenant,
@@ -7,6 +10,31 @@ import {
 import { validateCustomerContact } from "@/lib/customer-contact-form/validation"
 import { jsonResponse } from "@/utils/json-response"
 import { readJsonBody } from "@/utils/read-json-body"
+
+/**
+ * Prüft, ob der Standort zum gewählten Kunden gehört. Das Formular zeigt nur passende
+ * Standorte; hier gilt dieselbe Regel für manipulierte Anfragen. Ein Standort, den es nicht
+ * gibt oder den die Person nicht lesen darf (Directus antwortet 403 oder 404), gilt als ungültig.
+ * Gibt eine Fehlerantwort zurück oder `null`, wenn alles passt.
+ */
+async function checkLocation(
+  accessToken: string,
+  tenantId: string,
+  locationId: string
+): Promise<Response | null> {
+  try {
+    const locationTenant = await fetchLocationTenant(accessToken, locationId)
+    return locationTenant === tenantId
+      ? null
+      : jsonResponse(400, { error: "invalid_location" })
+  } catch (error) {
+    const status = getDirectusStatus(error)
+    if (status === 403 || status === 404) {
+      return jsonResponse(400, { error: "invalid_location" })
+    }
+    return toErrorResponse(error, "Directus location check", "invalid_location")
+  }
+}
 
 /**
  * Logik der Route POST /api/customer-contacts. Die Route prüft, dass jemand angemeldet ist;
@@ -26,18 +54,16 @@ export async function handleCreateContact(
     return jsonResponse(400, { error: "invalid_fields", fields })
   }
 
-  try {
-    // Das Formular zeigt nur Standorte des gewählten Kunden; hier gilt dieselbe Regel für manipulierte Anfragen.
-    if (body.locationId) {
-      const locationTenant = await fetchLocationTenant(
-        accessToken,
-        body.locationId
-      )
-      if (locationTenant !== body.tenantId) {
-        return jsonResponse(400, { error: "invalid_location" })
-      }
-    }
+  if (body.locationId) {
+    const rejection = await checkLocation(
+      accessToken,
+      body.tenantId,
+      body.locationId
+    )
+    if (rejection) return rejection
+  }
 
+  try {
     await createTenantUser(accessToken, body)
     return jsonResponse(200, { ok: true })
   } catch (error) {

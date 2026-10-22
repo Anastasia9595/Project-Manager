@@ -45,6 +45,19 @@ describe("validateCustomerContact", () => {
     ).toEqual({ email: "tooLong", notes: "tooLong" })
   })
 
+  it("misst die Länge am Rohwert wie das maxLength-Attribut", () => {
+    // 2000 Zeichen plus Leerzeichen am Ende: der Browser lässt das nicht zu, der Server lehnt es ebenfalls ab.
+    expect(
+      validateCustomerContact({ ...valid, notes: `${"a".repeat(2000)} ` })
+    ).toEqual({ notes: "tooLong" })
+    expect(
+      validateCustomerContact({ ...valid, notes: "a".repeat(2000) })
+    ).toEqual({})
+    expect(
+      validateCustomerContact({ ...valid, notes: "a\r\nb".repeat(500) })
+    ).toEqual({})
+  })
+
   it("prüft Telefon und Mobil nur, wenn sie ausgefüllt sind", () => {
     expect(
       validateCustomerContact({ ...valid, phone: "", mobile: "  " })

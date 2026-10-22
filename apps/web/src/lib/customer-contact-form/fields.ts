@@ -70,7 +70,7 @@ export function isContactMethod(value: unknown): value is ContactMethod {
   )
 }
 
-/** Leer ("nicht gewählt") oder eine Directus-UUID. */
+/** Leer ("nicht gewählt") oder eine Directus-UUID (tenants.id und location.id sind UUID-Primärschlüssel). */
 function isEmptyOrUuid(value: unknown): boolean {
   return value === "" || (typeof value === "string" && UUID_PATTERN.test(value))
 }

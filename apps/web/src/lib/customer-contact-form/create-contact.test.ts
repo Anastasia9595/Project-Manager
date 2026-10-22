@@ -113,8 +113,40 @@ describe("handleCreateContact", () => {
       TOKEN
     )
     expect(response.status).toBe(400)
+    expect(await response.json()).toEqual({ error: "invalid_location" })
     expect(createTenantUser).not.toHaveBeenCalled()
   })
+
+  it.each([403, 404])(
+    "wertet einen Standort, den Directus mit %i ablehnt, als ungültig",
+    async (directusStatus) => {
+      fetchLocationTenant.mockRejectedValue(directusError(directusStatus))
+      const response = await handleCreateContact(
+        post({ ...valid, locationId: LOCATION_ID }),
+        TOKEN
+      )
+      expect(response.status).toBe(400)
+      expect(await response.json()).toEqual({ error: "invalid_location" })
+      expect(createTenantUser).not.toHaveBeenCalled()
+    }
+  )
+
+  it.each([
+    [401, 401, "unauthorized"],
+    [500, 502, "unavailable"],
+  ])(
+    "bildet Directus-Status %i bei der Standort-Prüfung auf %i %s ab",
+    async (directusStatus, status, code) => {
+      fetchLocationTenant.mockRejectedValue(directusError(directusStatus))
+      const response = await handleCreateContact(
+        post({ ...valid, locationId: LOCATION_ID }),
+        TOKEN
+      )
+      expect(response.status).toBe(status)
+      expect(await response.json()).toEqual({ error: code })
+      expect(createTenantUser).not.toHaveBeenCalled()
+    }
+  )
 
   it("legt den Kontakt an, wenn der Standort zum Kunden gehört", async () => {
     fetchLocationTenant.mockResolvedValue(TENANT_ID)
@@ -129,6 +161,10 @@ describe("handleCreateContact", () => {
     [401, 401, "unauthorized"],
     [403, 403, "forbidden"],
     [400, 400, "create_failed"],
+    [409, 400, "create_failed"],
+    [422, 400, "create_failed"],
+    [404, 502, "unavailable"],
+    [429, 502, "unavailable"],
     [503, 502, "unavailable"],
   ])(
     "bildet den Directus-Status %i auf %i %s ab",

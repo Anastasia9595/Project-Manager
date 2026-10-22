@@ -158,6 +158,10 @@ const de = {
         "Kunden und Standorte konnten nicht geladen werden. Prüfe deine Verbindung und versuche es erneut.",
       forbidden:
         "Dir fehlt die Berechtigung, Kontaktpersonen anzulegen. Wende dich an deine Administration.",
+      sessionExpired:
+        "Deine Sitzung ist abgelaufen. Melde dich erneut an und lege den Kontakt dann noch einmal an.",
+      invalidLocation:
+        "Der gewählte Standort gehört nicht zu diesem Kunden. Wähle einen anderen Standort.",
       retry: "Erneut laden",
       save: "Kontaktperson anlegen",
       saving: "Wird angelegt …",

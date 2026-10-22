@@ -155,6 +155,10 @@ export default {
         "Customers and locations could not be loaded. Check your connection and try again.",
       forbidden:
         "You don't have permission to add contact persons. Please contact your administrator.",
+      sessionExpired:
+        "Your session has expired. Sign in again and then add the contact once more.",
+      invalidLocation:
+        "The selected location doesn't belong to this customer. Choose a different location.",
       retry: "Reload",
       save: "Add contact person",
       saving: "Adding …",
