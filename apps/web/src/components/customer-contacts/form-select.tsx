@@ -9,8 +9,7 @@ import {
 } from "@workspace/ui/components/select"
 
 import type { FieldAria } from "@/components/settings/form-field"
-
-export type SelectOption = { value: string; label: string }
+import type { SelectOption } from "@/lib/customer-contact-form/options"
 
 /**
  * Auswahlfeld mit String-Wert ("" = nichts gewählt).
