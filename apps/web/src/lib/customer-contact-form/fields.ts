@@ -56,8 +56,23 @@ const STRING_KEYS = [
   "notes",
 ] as const
 
-function isOneOf(value: unknown, allowed: readonly string[]): boolean {
-  return value === "" || (typeof value === "string" && allowed.includes(value))
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+export function isPosition(value: unknown): value is Position {
+  return typeof value === "string" && (POSITIONS as readonly string[]).includes(value)
+}
+
+export function isContactMethod(value: unknown): value is ContactMethod {
+  return (
+    typeof value === "string" &&
+    (CONTACT_METHODS as readonly string[]).includes(value)
+  )
+}
+
+/** Leer ("nicht gewählt") oder eine Directus-UUID. */
+function isEmptyOrUuid(value: unknown): boolean {
+  return value === "" || (typeof value === "string" && UUID_PATTERN.test(value))
 }
 
 export function isCustomerContactValues(
@@ -68,8 +83,10 @@ export function isCustomerContactValues(
   return (
     STRING_KEYS.every((key) => typeof record[key] === "string") &&
     typeof record.isActive === "boolean" &&
-    isOneOf(record.position, POSITIONS) &&
-    isOneOf(record.preferredContact, CONTACT_METHODS)
+    isEmptyOrUuid(record.tenantId) &&
+    isEmptyOrUuid(record.locationId) &&
+    (record.position === "" || isPosition(record.position)) &&
+    (record.preferredContact === "" || isContactMethod(record.preferredContact))
   )
 }
 

@@ -29,6 +29,38 @@ describe("validateCustomerContact", () => {
     expect(validateCustomerContact(valid)).toEqual({})
   })
 
+  it("begrenzt die Länge der Felder", () => {
+    expect(
+      validateCustomerContact({ ...valid, firstName: "a".repeat(101) })
+    ).toEqual({ firstName: "tooLong" })
+    expect(
+      validateCustomerContact({ ...valid, firstName: "a".repeat(100) })
+    ).toEqual({})
+    expect(
+      validateCustomerContact({
+        ...valid,
+        email: `${"a".repeat(250)}@b.de`,
+        notes: "a".repeat(2001),
+      })
+    ).toEqual({ email: "tooLong", notes: "tooLong" })
+  })
+
+  it("prüft Telefon und Mobil nur, wenn sie ausgefüllt sind", () => {
+    expect(
+      validateCustomerContact({ ...valid, phone: "", mobile: "  " })
+    ).toEqual({})
+    expect(
+      validateCustomerContact({
+        ...valid,
+        phone: "0561 123456",
+        mobile: "+49 170 1234567",
+      })
+    ).toEqual({})
+    expect(
+      validateCustomerContact({ ...valid, phone: "abc", mobile: "12" })
+    ).toEqual({ phone: "invalidPhone", mobile: "invalidPhone" })
+  })
+
   it("prüft die E-Mail nur, wenn sie ausgefüllt ist", () => {
     expect(validateCustomerContact({ ...valid, email: "" })).toEqual({})
     expect(validateCustomerContact({ ...valid, email: "kein-mail" })).toEqual({

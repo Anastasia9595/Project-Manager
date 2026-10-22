@@ -7,11 +7,14 @@ import {
   type CustomerContactValues,
 } from "@/lib/customer-contact-form/fields"
 
+const TENANT_ID = "11111111-1111-4111-8111-111111111111"
+const LOCATION_ID = "22222222-2222-4222-8222-222222222222"
+
 const filled: CustomerContactValues = {
   firstName: "  Anna ",
   lastName: "Muster",
-  tenantId: "tenant-1",
-  locationId: "location-1",
+  tenantId: TENANT_ID,
+  locationId: LOCATION_ID,
   position: "buchhaltung",
   isActive: false,
   email: "anna@example.com",
@@ -26,8 +29,8 @@ describe("toDirectusPayload", () => {
     expect(toDirectusPayload(filled)).toEqual({
       first_name: "Anna",
       last_name: "Muster",
-      tenant: "tenant-1",
-      locations: "location-1",
+      tenant: TENANT_ID,
+      locations: LOCATION_ID,
       positions: "buchhaltung",
       is_active: false,
       email: "anna@example.com",
@@ -75,6 +78,14 @@ describe("isCustomerContactValues", () => {
     const withoutNotes: Partial<CustomerContactValues> = { ...filled }
     delete withoutNotes.notes
     expect(isCustomerContactValues(withoutNotes)).toBe(false)
+  })
+
+  it("akzeptiert als IDs nur leere Werte oder UUIDs", () => {
+    for (const id of ["tenant-1", " ", `${TENANT_ID} `, "1; DROP"]) {
+      expect(isCustomerContactValues({ ...filled, tenantId: id })).toBe(false)
+      expect(isCustomerContactValues({ ...filled, locationId: id })).toBe(false)
+    }
+    expect(isCustomerContactValues({ ...filled, locationId: "" })).toBe(true)
   })
 
   it("lehnt unbekannte Positionen und Kontaktarten ab", () => {
