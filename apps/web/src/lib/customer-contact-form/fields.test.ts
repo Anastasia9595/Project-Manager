@@ -72,7 +72,8 @@ describe("isCustomerContactValues", () => {
     expect(isCustomerContactValues("text")).toBe(false)
     expect(isCustomerContactValues({ ...filled, firstName: 1 })).toBe(false)
     expect(isCustomerContactValues({ ...filled, isActive: "true" })).toBe(false)
-    const { notes: _notes, ...withoutNotes } = filled
+    const withoutNotes: Partial<CustomerContactValues> = { ...filled }
+    delete withoutNotes.notes
     expect(isCustomerContactValues(withoutNotes)).toBe(false)
   })
 

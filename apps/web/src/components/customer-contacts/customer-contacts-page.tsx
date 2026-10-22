@@ -1,4 +1,7 @@
 import { useMemo, useState } from "react"
+import { toast } from "sonner"
+
+import { Toaster } from "@workspace/ui/components/sonner"
 
 import { getDictionary } from "@/i18n"
 import { CreateButton } from "@/components/shared/create-button"
@@ -7,6 +10,7 @@ import { SearchInput } from "@/components/shared/search-input"
 import { CustomerContactsTable } from "../dashboard/customer-contacts/customer-contacts-table"
 import { DUMMY_CUSTOMER_CONTACTS } from "@/dummy-data/customer-contacts"
 import type { CustomerContact } from "@/models/customer-contact"
+import { CustomerContactForm } from "./customer-contact-form"
 
 function matchesQuery(contact: CustomerContact, query: string): boolean {
   const needle = query.trim().toLowerCase()
@@ -30,6 +34,7 @@ export function CustomerContactsPage({
 }) {
   const dict = getDictionary(locale).customerContactsPage
   const [query, setQuery] = useState("")
+  const [formOpen, setFormOpen] = useState(false)
 
   const filteredContacts = useMemo(
     () => customerContacts.filter((contact) => matchesQuery(contact, query)),
@@ -48,7 +53,10 @@ export function CustomerContactsPage({
               onChange={setQuery}
               placeholder={dict.searchPlaceholder}
             />
-            <CreateButton label={dict.newCustomerContact} />
+            <CreateButton
+              label={dict.newCustomerContact}
+              onClick={() => setFormOpen(true)}
+            />
           </>
         }
       />
@@ -58,6 +66,16 @@ export function CustomerContactsPage({
         paginationLabels={dict.pagination}
         locale={locale}
       />
+      <CustomerContactForm
+        open={formOpen}
+        onClose={() => setFormOpen(false)}
+        onCreated={() => {
+          setFormOpen(false)
+          toast.success(dict.form.created)
+        }}
+        t={dict.form}
+      />
+      <Toaster position="bottom-right" />
     </div>
   )
 }
