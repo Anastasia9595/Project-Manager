@@ -8,11 +8,14 @@ import {
   SelectValue,
 } from "@workspace/ui/components/select"
 
+import type { FieldAria } from "@/components/settings/form-field"
+
 export type SelectOption = { value: string; label: string }
 
 /**
  * Auswahlfeld mit String-Wert ("" = nichts gewählt).
  * `emptyLabel` fügt der Liste einen Eintrag zum Zurücksetzen hinzu; ohne ihn bleibt die Auswahl bestehen.
+ * `aria` kommt von `FormField` und verknüpft Pflichtstatus und Fehlertext mit dem Feld.
  */
 export function FormSelect({
   id,
@@ -23,6 +26,7 @@ export function FormSelect({
   emptyLabel,
   disabled,
   invalid,
+  aria,
 }: {
   id: string
   value: string
@@ -32,6 +36,7 @@ export function FormSelect({
   emptyLabel?: string
   disabled?: boolean
   invalid?: boolean
+  aria?: FieldAria
 }) {
   const items = useMemo(
     () => [
@@ -48,7 +53,7 @@ export function FormSelect({
       onValueChange={(next) => onValueChange(next ?? "")}
       disabled={disabled}
     >
-      <SelectTrigger id={id} aria-invalid={invalid ? true : undefined}>
+      <SelectTrigger id={id} aria-invalid={invalid ? true : undefined} {...aria}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>

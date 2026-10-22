@@ -25,22 +25,25 @@ import type { Dictionary } from "@/i18n"
 import {
   EMPTY_CUSTOMER_CONTACT_VALUES,
   POSITIONS,
+  isPosition,
   type CustomerContactValues,
 } from "@/lib/customer-contact-form/fields"
 import type { ContactOptions } from "@/lib/customer-contact-form/repository"
 import {
-  validateCustomerContact,
+  MAX_LENGTH,
   type ContactValidationCode,
+  validateCustomerContact,
 } from "@/lib/customer-contact-form/validation"
 import { getFullName } from "@/utils/full-name"
 import { ContactMethodPicker } from "./contact-method-picker"
 import { FormSelect } from "./form-select"
 
 type Dict = Dictionary["customerContactsPage"]["form"]
+type RequiredField = keyof Dict["validation"]["required"]
 type FieldErrors = Partial<Record<string, ContactValidationCode>>
 type OptionsState =
   | { state: "loading" }
-  | { state: "error" }
+  | { state: "error"; forbidden: boolean }
   | { state: "ready"; options: ContactOptions }
 
 /** Dialog zum Anlegen einer Kontaktperson (Directus: tenant_users). */
@@ -56,8 +59,11 @@ export function CustomerContactForm({
   onCreated: (fullName: string) => void
   t: Dict
 }) {
+  const [saving, setSaving] = useState(false)
+
   return (
-    <Dialog open={open} onOpenChange={(next) => !next && onClose()}>
+    // Während des Speicherns lässt sich der Dialog nicht schließen, damit kein Kontakt doppelt entsteht.
+    <Dialog open={open} onOpenChange={(next) => !next && !saving && onClose()}>
       <DialogContent
         closeLabel={t.close}
         className="flex max-h-[90vh] max-w-2xl flex-col gap-0 overflow-hidden p-0 text-left"
@@ -69,7 +75,11 @@ export function CustomerContactForm({
           </DialogDescription>
         </div>
         {/* Wird nur bei geöffnetem Dialog gerendert, startet also bei jedem Öffnen leer. */}
-        <CustomerContactFormBody t={t} onCreated={onCreated} />
+        <CustomerContactFormBody
+          t={t}
+          onCreated={onCreated}
+          onSavingChange={setSaving}
+        />
       </DialogContent>
     </Dialog>
   )
@@ -78,9 +88,11 @@ export function CustomerContactForm({
 function CustomerContactFormBody({
   t,
   onCreated,
+  onSavingChange,
 }: {
   t: Dict
   onCreated: (fullName: string) => void
+  onSavingChange: (saving: boolean) => void
 }) {
   const [values, setValues] = useState(EMPTY_CUSTOMER_CONTACT_VALUES)
   const [errors, setErrors] = useState<FieldErrors>({})
@@ -88,26 +100,44 @@ function CustomerContactFormBody({
     state: "loading",
   })
   const [optionsAttempt, setOptionsAttempt] = useState(0)
+  const [focusRequest, setFocusRequest] = useState(0)
   const { status, send } = useSaveRequest("/api/customer-contacts", "POST")
   const formRef = useRef<HTMLFormElement>(null)
-  const activeLabelId = useId()
   const activeHintId = useId()
+  const saving = status.state === "saving"
 
   useEffect(() => {
     const controller = new AbortController()
     fetch("/api/customer-contacts/options", { signal: controller.signal })
-      .then((response) => {
-        if (!response.ok) throw new Error("options_failed")
-        return response.json() as Promise<ContactOptions>
-      })
-      .then((options) => setOptionsState({ state: "ready", options }))
-      .catch((error: unknown) => {
-        if ((error as Error).name !== "AbortError") {
-          setOptionsState({ state: "error" })
+      .then(async (response) => {
+        if (response.status === 403) {
+          setOptionsState({ state: "error", forbidden: true })
+          return
         }
+        if (!response.ok) throw new Error("options_failed")
+        const options = (await response.json()) as ContactOptions
+        setOptionsState({ state: "ready", options })
+      })
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === "AbortError") return
+        setOptionsState({ state: "error", forbidden: false })
       })
     return () => controller.abort()
   }, [optionsAttempt])
+
+  // Meldet dem Dialog, ob gerade gespeichert wird (sperrt das Schließen).
+  useEffect(() => {
+    onSavingChange(saving)
+  }, [saving, onSavingChange])
+  useEffect(() => () => onSavingChange(false), [onSavingChange])
+
+  // Nach einem fehlgeschlagenen Absenden ins erste fehlerhafte Feld springen.
+  useEffect(() => {
+    if (focusRequest === 0) return
+    formRef.current
+      ?.querySelector<HTMLElement>('[aria-invalid="true"]')
+      ?.focus()
+  }, [focusRequest])
 
   const options = optionsState.state === "ready" ? optionsState.options : null
 
@@ -150,10 +180,12 @@ function CustomerContactFormBody({
   }
 
   function bindText(
-    key: "firstName" | "lastName" | "email" | "phone" | "mobile"
+    key: "firstName" | "lastName" | "email" | "phone" | "mobile",
+    maxLength: number
   ) {
     return {
       value: values[key],
+      maxLength,
       autoComplete: "off",
       placeholder: t.placeholders[key],
       "aria-invalid": errors[key] ? true : undefined,
@@ -168,12 +200,7 @@ function CustomerContactFormBody({
     const validationErrors = validateCustomerContact(values)
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors)
-      // Nach dem Rendern ins erste fehlerhafte Feld springen.
-      requestAnimationFrame(() =>
-        formRef.current
-          ?.querySelector<HTMLElement>('[aria-invalid="true"]')
-          ?.focus()
-      )
+      setFocusRequest((request) => request + 1)
       return
     }
 
@@ -182,30 +209,41 @@ function CustomerContactFormBody({
     }
   }
 
-  const message = (key: string) => {
+  const isRequiredField = (key: string): key is RequiredField =>
+    key in t.validation.required
+
+  const message = (key: RequiredField | "email" | "phone" | "mobile" | "notes") => {
     const code = errors[key]
     if (!code) return undefined
     if (code === "invalidEmail") return t.validation.invalidEmail
-    return t.validation.required[key as keyof Dict["validation"]["required"]]
+    if (code === "invalidPhone") return t.validation.invalidPhone
+    if (code === "tooLong") return t.validation.tooLong
+    return isRequiredField(key) ? t.validation.required[key] : undefined
   }
 
   if (optionsState.state === "loading") {
     return (
-      <p className="px-8 pt-2 pb-8 text-sm text-muted-foreground">
+      <p
+        role="status"
+        className="px-8 pt-2 pb-8 text-sm text-muted-foreground"
+      >
         {t.loading}
       </p>
     )
   }
 
   if (!options) {
+    const forbidden = optionsState.state === "error" && optionsState.forbidden
     return (
       <div className="flex flex-col items-start gap-4 px-8 pt-2 pb-8">
         <p role="alert" className="text-sm text-destructive">
-          {t.optionsError}
+          {forbidden ? t.forbidden : t.optionsError}
         </p>
-        <Button variant="outline" onClick={retryOptions}>
-          {t.retry}
-        </Button>
+        {!forbidden && (
+          <Button variant="outline" onClick={retryOptions}>
+            {t.retry}
+          </Button>
+        )}
       </div>
     )
   }
@@ -236,21 +274,29 @@ function CustomerContactFormBody({
               required
               error={message("firstName")}
             >
-              {(id) => (
+              {(id, aria) => (
                 <SettingsInput
                   id={id}
                   autoFocus
-                  {...bindText("firstName")}
+                  {...aria}
+                  {...bindText("firstName", MAX_LENGTH.name)}
                 />
               )}
             </FormField>
             <FormField label={t.lastName} required error={message("lastName")}>
-              {(id) => <SettingsInput id={id} {...bindText("lastName")} />}
+              {(id, aria) => (
+                <SettingsInput
+                  id={id}
+                  {...aria}
+                  {...bindText("lastName", MAX_LENGTH.name)}
+                />
+              )}
             </FormField>
             <FormField label={t.tenant} required error={message("tenantId")}>
-              {(id) => (
+              {(id, aria) => (
                 <FormSelect
                   id={id}
+                  aria={aria}
                   value={values.tenantId}
                   invalid={!!errors.tenantId}
                   options={tenantOptions}
@@ -288,37 +334,27 @@ function CustomerContactFormBody({
                   placeholder={t.placeholders.position}
                   emptyLabel={t.placeholders.positionEmpty}
                   onValueChange={(next) =>
-                    setField(
-                      "position",
-                      next as CustomerContactValues["position"]
-                    )
+                    setField("position", isPosition(next) ? next : "")
                   }
                 />
               )}
             </FormField>
-            <div
-              className="flex items-center justify-between gap-4 rounded-2xl border border-input bg-input/30 px-4 py-3 sm:col-span-2"
-              onClick={() => setField("isActive", !values.isActive)}
-            >
-              <div className="flex flex-col gap-1">
-                <span id={activeLabelId} className="text-sm font-semibold">
-                  {t.isActive}
-                </span>
+            <label className="flex cursor-pointer items-center justify-between gap-4 rounded-2xl border border-input bg-input/30 px-4 py-3 sm:col-span-2">
+              <span className="flex flex-col gap-1">
+                <span className="text-sm font-semibold">{t.isActive}</span>
                 <span
                   id={activeHintId}
                   className="text-xs text-muted-foreground"
                 >
                   {t.isActiveHint}
                 </span>
-              </div>
+              </span>
               <Switch
                 checked={values.isActive}
                 onCheckedChange={(checked) => setField("isActive", checked)}
-                onClick={(event) => event.stopPropagation()}
-                aria-labelledby={activeLabelId}
                 aria-describedby={activeHintId}
               />
-            </div>
+            </label>
           </FormGrid>
         </fieldset>
 
@@ -328,18 +364,37 @@ function CustomerContactFormBody({
           </legend>
           <FormGrid>
             <FormField label={t.email} error={message("email")}>
-              {(id) => (
-                <SettingsInput id={id} type="email" {...bindText("email")} />
+              {(id, aria) => (
+                <SettingsInput
+                  id={id}
+                  type="email"
+                  {...aria}
+                  {...bindText("email", MAX_LENGTH.email)}
+                />
               )}
             </FormField>
-            <FormField label={t.phone}>
-              {(id) => (
-                <SettingsInput id={id} type="tel" {...bindText("phone")} />
+            <FormField label={t.phone} error={message("phone")}>
+              {(id, aria) => (
+                <SettingsInput
+                  id={id}
+                  type="tel"
+                  {...aria}
+                  {...bindText("phone", MAX_LENGTH.phone)}
+                />
               )}
             </FormField>
-            <FormField label={t.mobile} className="sm:col-span-2">
-              {(id) => (
-                <SettingsInput id={id} type="tel" {...bindText("mobile")} />
+            <FormField
+              label={t.mobile}
+              error={message("mobile")}
+              className="sm:col-span-2"
+            >
+              {(id, aria) => (
+                <SettingsInput
+                  id={id}
+                  type="tel"
+                  {...aria}
+                  {...bindText("mobile", MAX_LENGTH.phone)}
+                />
               )}
             </FormField>
             <div className="sm:col-span-2">
@@ -348,16 +403,24 @@ function CustomerContactFormBody({
                 onChange={(next) => setField("preferredContact", next)}
                 legend={t.preferredContact}
                 hint={t.preferredContactHint}
+                clearLabel={t.preferredContactClear}
                 labels={t.contactMethods}
               />
             </div>
-            <FormField label={t.notes} className="sm:col-span-2">
-              {(id) => (
+            <FormField
+              label={t.notes}
+              error={message("notes")}
+              className="sm:col-span-2"
+            >
+              {(id, aria) => (
                 <Textarea
                   id={id}
                   rows={4}
+                  maxLength={MAX_LENGTH.notes}
                   value={values.notes}
                   placeholder={t.placeholders.notes}
+                  aria-invalid={errors.notes ? true : undefined}
+                  {...aria}
                   onChange={(event) => setField("notes", event.target.value)}
                 />
               )}
@@ -369,19 +432,28 @@ function CustomerContactFormBody({
       <div className="mt-4 flex items-center justify-end gap-3 border-t border-border px-8 py-4">
         {status.state === "error" && (
           <p role="alert" className="mr-auto text-sm text-destructive">
-            {t.saveError}
+            {status.code === "forbidden" ? t.forbidden : t.saveError}
           </p>
         )}
-        <DialogClose render={<Button type="button" variant="outline" size="lg" />}>
+        <DialogClose
+          render={
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              disabled={saving}
+            />
+          }
+        >
           {t.cancel}
         </DialogClose>
         <Button
           type="submit"
           size="lg"
-          disabled={status.state === "saving"}
+          disabled={saving}
           className="bg-primary text-white hover:bg-primary/90"
         >
-          {status.state === "saving" ? t.saving : t.save}
+          {saving ? t.saving : t.save}
         </Button>
       </div>
     </form>
