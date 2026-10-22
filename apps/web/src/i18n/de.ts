@@ -111,7 +111,8 @@ const de = {
       mobile: "Mobiltelefon",
       preferredContact: "Bevorzugter Kontaktweg",
       preferredContactHint:
-        "Optional. Klicke erneut auf die gewählte Option, um sie abzuwählen.",
+        "Optional. Wähle den Weg, auf dem die Person am liebsten erreicht wird.",
+      preferredContactClear: "Auswahl zurücksetzen",
       notes: "Notizen",
       placeholders: {
         firstName: "Anna",
@@ -148,10 +149,19 @@ const de = {
         },
         invalidEmail:
           "Bitte gib eine gültige E-Mail-Adresse ein, z. B. name@firma.de.",
+        invalidPhone:
+          "Bitte gib eine gültige Telefonnummer ein, z. B. 0561 123456.",
+        tooLong: "Der Text ist zu lang. Bitte kürze ihn.",
       },
       loading: "Kunden und Standorte werden geladen …",
       optionsError:
         "Kunden und Standorte konnten nicht geladen werden. Prüfe deine Verbindung und versuche es erneut.",
+      forbidden:
+        "Dir fehlt die Berechtigung, Kontaktpersonen anzulegen. Wende dich an deine Administration.",
+      sessionExpired:
+        "Deine Sitzung ist abgelaufen. Melde dich erneut an und lege den Kontakt dann noch einmal an.",
+      invalidLocation:
+        "Der gewählte Standort gehört nicht zu diesem Kunden. Wähle einen anderen Standort.",
       retry: "Erneut laden",
       save: "Kontaktperson anlegen",
       saving: "Wird angelegt …",

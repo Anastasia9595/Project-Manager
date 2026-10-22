@@ -1,6 +1,7 @@
 import { readMe, updateMe } from "@directus/sdk"
 
 import { createAuthClient } from "@/lib/auth/directus-auth-client"
+import { createUserClient } from "@/lib/auth/user-client"
 import {
   PROFILE_DIRECTUS_FIELDS,
   type DirectusProfile,
@@ -8,12 +9,6 @@ import {
   toDirectusPayload,
 } from "@/lib/profile-fields"
 import type { Profile, ProfileValues } from "@/models/profile"
-
-async function createUserClient(accessToken: string) {
-  const client = createAuthClient()
-  await client.setToken(accessToken)
-  return client
-}
 
 export async function fetchProfile(accessToken: string): Promise<Profile> {
   const client = await createUserClient(accessToken)

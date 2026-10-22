@@ -3,7 +3,16 @@ import { useId } from "react"
 import { Label } from "@workspace/ui/components/label"
 import { cn } from "@workspace/ui/lib/utils"
 
-/** Label mit zugehörigem Eingabefeld; `children` erhält die generierte id. */
+/** Barrierefreiheits-Attribute, die das Eingabefeld für Pflichtstatus und Fehlertext übernimmt. */
+export type FieldAria = {
+  "aria-required"?: true
+  "aria-describedby"?: string
+}
+
+/**
+ * Label mit zugehörigem Eingabefeld; `children` erhält die generierte id und die
+ * ARIA-Attribute, die das Feld mit `{...aria}` übernehmen kann.
+ */
 export function FormField({
   label,
   required,
@@ -17,9 +26,14 @@ export function FormField({
   /** Fehlermeldung, die unter dem Feld erscheint. */
   error?: string
   className?: string
-  children: (id: string) => React.ReactNode
+  children: (id: string, aria: FieldAria) => React.ReactNode
 }) {
   const id = useId()
+  const errorId = `${id}-error`
+  const aria: FieldAria = {
+    "aria-required": required ? true : undefined,
+    "aria-describedby": error ? errorId : undefined,
+  }
   return (
     <div className={cn("flex flex-col gap-2", className)}>
       <Label htmlFor={id} className="text-sm font-semibold">
@@ -30,9 +44,9 @@ export function FormField({
           </span>
         )}
       </Label>
-      {children(id)}
+      {children(id, aria)}
       {error && (
-        <p role="alert" className="text-xs text-destructive">
+        <p id={errorId} role="alert" className="text-xs text-destructive">
           {error}
         </p>
       )}

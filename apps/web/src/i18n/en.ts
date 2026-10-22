@@ -109,7 +109,8 @@ export default {
       mobile: "Mobile phone",
       preferredContact: "Preferred way to contact",
       preferredContactHint:
-        "Optional. Select the chosen option again to clear it.",
+        "Optional. Choose how the person prefers to be reached.",
+      preferredContactClear: "Clear selection",
       notes: "Notes",
       placeholders: {
         firstName: "Anna",
@@ -146,10 +147,18 @@ export default {
         },
         invalidEmail:
           "Please enter a valid email address, e.g. name@company.com.",
+        invalidPhone: "Please enter a valid phone number, e.g. 0561 123456.",
+        tooLong: "This text is too long. Please shorten it.",
       },
       loading: "Loading customers and locations …",
       optionsError:
         "Customers and locations could not be loaded. Check your connection and try again.",
+      forbidden:
+        "You don't have permission to add contact persons. Please contact your administrator.",
+      sessionExpired:
+        "Your session has expired. Sign in again and then add the contact once more.",
+      invalidLocation:
+        "The selected location doesn't belong to this customer. Choose a different location.",
       retry: "Reload",
       save: "Add contact person",
       saving: "Adding …",
