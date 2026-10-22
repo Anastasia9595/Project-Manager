@@ -420,7 +420,9 @@ describe("handleCreateContact", () => {
   it("antwortet mit create_failed, wenn Directus den Eintrag ablehnt", async () => {
     vi.spyOn(console, "error").mockImplementation(() => {})
     createTenantUser.mockRejectedValue(
-      Object.assign(new Error("rejected"), { errors: [{ message: "x" }] })
+      Object.assign(new Error("rejected"), {
+        errors: [{ message: "x", extensions: { code: "FAILED_VALIDATION" } }],
+      })
     )
     const response = await handleCreateContact(post(valid))
     expect(response.status).toBe(400)
