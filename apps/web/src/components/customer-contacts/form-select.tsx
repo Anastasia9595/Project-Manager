@@ -1,19 +1,63 @@
-import type * as React from "react"
+import { useMemo } from "react"
 
-import { cn } from "@workspace/ui/lib/utils"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@workspace/ui/components/select"
 
-/** Natives Auswahlfeld im Stil der Einstellungs-Eingabefelder (SettingsInput). */
+export type SelectOption = { value: string; label: string }
+
+/**
+ * Auswahlfeld mit String-Wert ("" = nichts gewählt).
+ * `emptyLabel` fügt der Liste einen Eintrag zum Zurücksetzen hinzu; ohne ihn bleibt die Auswahl bestehen.
+ */
 export function FormSelect({
-  className,
-  ...props
-}: React.ComponentProps<"select">) {
+  id,
+  value,
+  onValueChange,
+  options,
+  placeholder,
+  emptyLabel,
+  disabled,
+  invalid,
+}: {
+  id: string
+  value: string
+  onValueChange: (value: string) => void
+  options: SelectOption[]
+  placeholder: string
+  emptyLabel?: string
+  disabled?: boolean
+  invalid?: boolean
+}) {
+  const items = useMemo(
+    () => [
+      ...(emptyLabel ? [{ value: null, label: emptyLabel }] : []),
+      ...options,
+    ],
+    [emptyLabel, options]
+  )
+
   return (
-    <select
-      className={cn(
-        "h-12 w-full min-w-0 rounded-4xl border border-input bg-input/30 px-3 py-1 text-base transition-colors outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 md:text-sm",
-        className
-      )}
-      {...props}
-    />
+    <Select
+      items={items}
+      value={value || null}
+      onValueChange={(next) => onValueChange(next ?? "")}
+      disabled={disabled}
+    >
+      <SelectTrigger id={id} aria-invalid={invalid ? true : undefined}>
+        <SelectValue placeholder={placeholder} />
+      </SelectTrigger>
+      <SelectContent>
+        {items.map((item) => (
+          <SelectItem key={item.value ?? "empty"} value={item.value}>
+            {item.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   )
 }

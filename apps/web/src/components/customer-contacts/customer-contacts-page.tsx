@@ -10,6 +10,7 @@ import { SearchInput } from "@/components/shared/search-input"
 import { CustomerContactsTable } from "../dashboard/customer-contacts/customer-contacts-table"
 import { DUMMY_CUSTOMER_CONTACTS } from "@/dummy-data/customer-contacts"
 import type { CustomerContact } from "@/models/customer-contact"
+import { fillTemplate } from "@/utils/fill-template"
 import { CustomerContactForm } from "./customer-contact-form"
 
 function matchesQuery(contact: CustomerContact, query: string): boolean {
@@ -69,9 +70,9 @@ export function CustomerContactsPage({
       <CustomerContactForm
         open={formOpen}
         onClose={() => setFormOpen(false)}
-        onCreated={() => {
+        onCreated={(fullName) => {
           setFormOpen(false)
-          toast.success(dict.form.created)
+          toast.success(fillTemplate(dict.form.created, { name: fullName }))
         }}
         t={dict.form}
       />
