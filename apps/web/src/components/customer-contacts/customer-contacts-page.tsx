@@ -8,7 +8,6 @@ import { CreateButton } from "@/components/shared/create-button"
 import { PageHeader } from "@/components/shared/page-header"
 import { SearchInput } from "@/components/shared/search-input"
 import { CustomerContactsTable } from "../dashboard/customer-contacts/customer-contacts-table"
-import { DUMMY_CUSTOMER_CONTACTS } from "@/dummy-data/customer-contacts"
 import type { CustomerContact } from "@/models/customer-contact"
 import { fillTemplate } from "@/utils/fill-template"
 import { CustomerContactForm } from "./customer-contact-form"
@@ -28,10 +27,10 @@ const PAGE_SIZE = 10
 
 export function CustomerContactsPage({
   locale,
-  customerContacts = DUMMY_CUSTOMER_CONTACTS,
+  customerContacts,
 }: {
   locale?: string
-  customerContacts?: CustomerContact[]
+  customerContacts: CustomerContact[]
 }) {
   const dict = getDictionary(locale).customerContactsPage
   const [query, setQuery] = useState("")

@@ -2,17 +2,27 @@
 import AppLayout from "@/layouts/app.astro"
 import { getDictionary } from "@/i18n"
 import { CustomerContactDetailPage } from "@/components/customer-contacts/customer-contact-detail-page"
-import { DUMMY_CUSTOMER_CONTACTS } from "@/dummy-data/customer-contacts"
+import { isDirectusError } from "@directus/sdk"
+import { getRequestSession } from "@/lib/auth/request-session"
+import { fetchCustomerContact } from "@/lib/customer-contacts-repository"
 
-// TODO: durch Directus-Abfrage ersetzen (siehe dummy-data/customer-contacts.ts).
-const contact = DUMMY_CUSTOMER_CONTACTS.find(
-  (item) => item.id === Astro.params.id
-)
-if (!contact) {
-  return new Response(null, { status: 404 })
-}
+const session = getRequestSession(Astro.cookies, Astro.locals)
+if (!session) return Astro.redirect("/login")
 
 const dict = getDictionary(Astro.currentLocale ?? "de")
+
+let contact
+try {
+  contact = await fetchCustomerContact(
+    session.tokens.accessToken,
+    Astro.params.id ?? "",
+    dict.customerContactsPage.form.positions
+  )
+} catch (error) {
+  // Unbekannte oder nicht erlaubte ID -> 404, alles andere ist ein echter Fehler.
+  if (!isDirectusError(error)) throw error
+  return new Response(null, { status: 404 })
+}
 ---
 
 <AppLayout title={`${contact.customer} – ${dict.sidebar.companyProfile}`}>
