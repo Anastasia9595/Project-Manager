@@ -17,8 +17,13 @@ export function RunningTimerBar({
   labels: { running: string; stop: string }
 }) {
   return (
-    <Card className="flex flex-wrap items-center justify-between gap-4 px-5 py-4">
-      <p className="min-w-0 truncate text-sm text-muted-foreground">
+    <div role="status" className="sticky top-2 z-10">
+    <Card className="flex flex-wrap items-center justify-between gap-4 border-l-4 border-l-destructive px-5 py-3">
+      <p className="flex min-w-0 items-center gap-2 truncate text-sm text-muted-foreground">
+        <span
+          aria-hidden
+          className="size-2 shrink-0 animate-pulse rounded-full bg-destructive motion-reduce:animate-none"
+        />
         <span className="text-foreground">{labels.running}</span>{" "}
         <span className="font-semibold text-foreground">{taskTitle}</span> ·{" "}
         {projectName}
@@ -42,5 +47,6 @@ export function RunningTimerBar({
         </Button>
       </div>
     </Card>
+    </div>
   )
 }

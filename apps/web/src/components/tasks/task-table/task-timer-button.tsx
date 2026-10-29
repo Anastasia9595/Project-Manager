@@ -23,7 +23,7 @@ export function TaskTimerButton({
       : labels.locked
   return (
     <Button
-      variant="ghost"
+      variant={task.isRunning ? "ghost" : "outline"}
       size="icon-sm"
       aria-label={label}
       title={label}

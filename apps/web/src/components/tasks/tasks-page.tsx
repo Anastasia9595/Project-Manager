@@ -48,16 +48,6 @@ export function TasksPage({
         }
       />
 
-      <TimeSummaryCards
-        todaySeconds={summary.todaySeconds}
-        weekSeconds={summary.weekSeconds}
-        labels={{
-          today: dict.summary.today,
-          week: dict.summary.week,
-          unit: dict.hoursUnit,
-        }}
-      />
-
       {runningTimer && (
         <RunningTimerBar
           taskTitle={runningTimer.task?.title ?? runningTimer.taskId}
@@ -67,6 +57,16 @@ export function TasksPage({
           labels={dict.timer}
         />
       )}
+
+      <TimeSummaryCards
+        todaySeconds={summary.todaySeconds}
+        weekSeconds={summary.weekSeconds}
+        labels={{
+          today: dict.summary.today,
+          week: dict.summary.week,
+          unit: dict.hoursUnit,
+        }}
+      />
 
       {groups.length === 0 ? (
         <TasksEmptyState message={dict.noResults} />
