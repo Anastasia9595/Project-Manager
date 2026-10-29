@@ -1,6 +1,7 @@
 import { readItem, readItems } from "@directus/sdk"
 
 import { createUserClient } from "@/lib/auth/user-client"
+import { getProfileAvatarUrl } from "@/lib/profile-fields"
 import type { CustomerContact } from "@/models/customer-contact"
 import { getFullName } from "@/utils/full-name"
 
@@ -28,6 +29,7 @@ type UserRow = {
 type TenantRow = {
   id: string
   tenant_name: string | null
+  logo: string | null
   main_email: string | null
   main_phone: string | null
   notes: string | null
@@ -40,6 +42,7 @@ type TenantRow = {
 const FIELDS = [
   "id",
   "tenant_name",
+  "logo",
   "main_email",
   "main_phone",
   "notes",
@@ -94,6 +97,8 @@ export function toCustomerContact(
   return {
     id: row.id,
     customer: row.tenant_name ?? "",
+    // Der Avatar-Proxy liefert jede Directus-Datei mit dem Token der angemeldeten Person aus.
+    logoUrl: row.logo ? getProfileAvatarUrl(row.logo) : undefined,
     contactPerson: getFullName(users[0]?.first_name, users[0]?.last_name),
     website: main?.website ?? "",
     email: row.main_email ?? "",
