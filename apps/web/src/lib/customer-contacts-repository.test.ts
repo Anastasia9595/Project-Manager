@@ -24,6 +24,7 @@ describe("toCustomerContact", () => {
       {
         id: "t1",
         tenant_name: "X GmbH",
+        logo: "file-1",
         main_email: "info@x.de",
         main_phone: "0561 0",
         notes: null,
@@ -49,6 +50,7 @@ describe("toCustomerContact", () => {
 
     expect(result).toMatchObject({
       customer: "X GmbH",
+      logoUrl: "/api/profile/avatar?id=file-1",
       contactPerson: "Anna Muster",
       website: "https://x.de",
       address: "Hauptstraße 1, 34117 Kassel",
@@ -74,6 +76,7 @@ describe("toCustomerContact", () => {
     const row = {
       id: "t3",
       tenant_name: "Y GmbH",
+      logo: null,
       main_email: null,
       main_phone: null,
       notes: null,
@@ -110,6 +113,7 @@ describe("toCustomerContact", () => {
     const result = toCustomerContact({
       id: "t2",
       tenant_name: null,
+      logo: null,
       main_email: null,
       main_phone: null,
       notes: null,

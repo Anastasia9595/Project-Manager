@@ -22,6 +22,7 @@ export function DetailBanner({
         <InitialsAvatar
           name={contact.customer}
           logoUrl={contact.logoUrl}
+          contain
           className="size-14 border-2 border-white"
           fallbackClassName="bg-primary text-sm text-white"
         />

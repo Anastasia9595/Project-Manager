@@ -15,6 +15,7 @@ export function CustomerCell({
         name={contact.customer}
         logoUrl={contact.logoUrl}
         size="lg"
+        contain
       />
       <span>{contact.customer}</span>
     </div>
