@@ -2,12 +2,22 @@
 import AppLayout from "@/layouts/app.astro"
 import { getDictionary } from "@/i18n"
 import { CustomerContactsPage } from "@/components/customer-contacts/customer-contacts-page"
+import { getRequestSession } from "@/lib/auth/request-session"
+import { fetchCustomerContacts } from "@/lib/customer-contacts-repository"
 
+const session = getRequestSession(Astro.cookies, Astro.locals)
+if (!session) return Astro.redirect("/login")
+
+const customerContacts = await fetchCustomerContacts(session.tokens.accessToken)
 const dict = getDictionary(Astro.currentLocale ?? "de")
 ---
 
 <AppLayout title={dict.sidebar.companyProfile}>
   <div class="p-6">
-    <CustomerContactsPage client:load locale={Astro.currentLocale} />
+    <CustomerContactsPage
+      client:load
+      locale={Astro.currentLocale}
+      customerContacts={customerContacts}
+    />
   </div>
 </AppLayout>

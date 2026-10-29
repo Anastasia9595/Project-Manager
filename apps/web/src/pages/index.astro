@@ -6,10 +6,19 @@ import { MyTasks } from "@/components/dashboard/my-tasks/my-tasks"
 import { WeeklyWorkTime } from "@/components/dashboard/work-time/weekly-work-time"
 import { CustomerContactsTable } from "@/components/dashboard/customer-contacts/customer-contacts-table"
 import { getDictionary } from "@/i18n"
+import { getRequestSession } from "@/lib/auth/request-session"
+import { fetchCustomerContacts } from "@/lib/customer-contacts-repository"
 
 const locale = Astro.currentLocale ?? "de"
 const user = Astro.locals.user!
 const dict = getDictionary(locale)
+
+const session = getRequestSession(Astro.cookies, Astro.locals)
+if (!session) return Astro.redirect("/login")
+// Das Dashboard-Widget zeigt nur die ersten Kunden; die volle Liste steht unter /company-profile.
+const customerContacts = (
+  await fetchCustomerContacts(session.tokens.accessToken)
+).slice(0, 5)
 ---
 
 <AppLayout>
@@ -32,6 +41,7 @@ const dict = getDictionary(locale)
         <CustomerContactsTable
           client:load
           compact
+          contacts={customerContacts}
           title={dict.dashboard.customerContacts.title}
         />
       </div>

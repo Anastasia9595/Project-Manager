@@ -7,7 +7,6 @@ import {
   type DataTablePaginationLabels,
 } from "@workspace/ui/components/data-table"
 
-import { DUMMY_CUSTOMER_CONTACTS } from "@/dummy-data/customer-contacts"
 import type { CustomerContact } from "@/models/customer-contact"
 import {
   getCompactColumns,
@@ -15,14 +14,14 @@ import {
 } from "./customer-contacts-columns"
 
 export function CustomerContactsTable({
-  contacts = DUMMY_CUSTOMER_CONTACTS,
+  contacts,
   title,
   compact = false,
   pageSize,
   paginationLabels,
   locale,
 }: {
-  contacts?: CustomerContact[]
+  contacts: CustomerContact[]
   title?: string
   /** Reduzierter Spaltensatz fuer schmale Container, z.B. das Dashboard-Widget. */
   compact?: boolean
