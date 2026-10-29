@@ -62,6 +62,18 @@ const FIELDS = [
   "tenant_users.phone",
 ]
 
+const POSITION_PRIORITY = [
+  "management",
+  "werbeabteilung",
+  "assistenz_von_fr_seifert",
+  "assistenz_empfang",
+]
+
+function positionRank(position: string | null): number {
+  const index = POSITION_PRIORITY.indexOf(position ?? "")
+  return index === -1 ? POSITION_PRIORITY.length : index
+}
+
 function formatAddress(location?: LocationRow): string {
   if (!location) return ""
   const town = [location.postal_code, location.city].filter(Boolean).join(" ")
@@ -74,7 +86,9 @@ export function toCustomerContact(
   positionLabels: Record<string, string> = {}
 ): CustomerContact {
   const locations = row.locations ?? []
-  const users = row.tenant_users ?? []
+  const users = [...(row.tenant_users ?? [])].sort(
+    (a, b) => positionRank(a.positions) - positionRank(b.positions)
+  )
   const main = locations.find((location) => location.is_primary) ?? locations[0]
 
   return {

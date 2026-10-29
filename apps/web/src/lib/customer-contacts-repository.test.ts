@@ -62,6 +62,50 @@ describe("toCustomerContact", () => {
     expect(result.branches).toHaveLength(2)
   })
 
+  it("wählt die Geschäftsleitung als Ansprechpartner und sortiert die Personen danach", () => {
+    const user = (id: string, last: string, positions: string) => ({
+      id,
+      first_name: "A",
+      last_name: last,
+      positions,
+      email: null,
+      phone: null,
+    })
+    const row = {
+      id: "t3",
+      tenant_name: "Y GmbH",
+      main_email: null,
+      main_phone: null,
+      notes: null,
+      date_created: null,
+      distributor: null,
+      locations: null,
+    }
+
+    const withBoss = toCustomerContact({
+      ...row,
+      tenant_users: [
+        user("1", "Buch", "buchhaltung"),
+        user("2", "Assi", "assistenz_von_fr_seifert"),
+        user("3", "Chef", "management"),
+        user("4", "Werbung", "werbeabteilung"),
+      ],
+    })
+    expect(withBoss.contactPerson).toBe("A Chef")
+    expect(withBoss.contacts?.map((c) => c.name)).toEqual([
+      "A Chef",
+      "A Werbung",
+      "A Assi",
+      "A Buch",
+    ])
+
+    const withoutBoss = toCustomerContact({
+      ...row,
+      tenant_users: [user("1", "Buch", "buchhaltung"), user("2", "Assi", "assistenz_von_fr_seifert")],
+    })
+    expect(withoutBoss.contactPerson).toBe("A Assi")
+  })
+
   it("liefert leere Texte statt null, wenn Daten fehlen", () => {
     const result = toCustomerContact({
       id: "t2",
