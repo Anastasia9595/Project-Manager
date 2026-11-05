@@ -173,6 +173,61 @@ const de = {
       medium: "Mittel",
       low: "Niedrig",
     },
+    form: {
+      title: "Neue Aufgabe",
+      description:
+        "Lege eine Aufgabe zu einem laufenden Projekt an. Eine Vorlage füllt Titel, Beschreibung und Fälligkeit vor.",
+      requiredNote: "Felder mit * sind Pflichtfelder.",
+      template: "Vorlage",
+      name: "Titel",
+      project: "Projekt",
+      dueDate: "Fälligkeit",
+      priority: "Priorität",
+      taskDescription: "Beschreibung",
+      priorities: {
+        high: "Hoch",
+        medium: "Mittel",
+        low: "Niedrig",
+      },
+      placeholders: {
+        template: "Vorlage auswählen",
+        templateEmpty: "Ohne Vorlage",
+        name: "Zum Beispiel: Druckdaten prüfen",
+        project: "Projekt auswählen",
+        projectNone: "Keine offenen Projekte vorhanden",
+        priority: "Priorität auswählen",
+        description: "Was ist zu tun?",
+      },
+      validation: {
+        required: {
+          name: "Bitte gib einen Titel ein.",
+          projectId: "Bitte wähle ein Projekt aus.",
+          dueDate: "Bitte wähle ein Fälligkeitsdatum aus.",
+        },
+        invalid: "Bitte wähle einen Eintrag aus der Liste aus.",
+        invalidDate: "Bitte gib ein gültiges Datum ein.",
+        tooLong: "Der Text ist zu lang. Bitte kürze ihn.",
+      },
+      errors: {
+        sessionExpired:
+          "Deine Sitzung ist abgelaufen. Melde dich erneut an und lege die Aufgabe dann noch einmal an.",
+        forbidden:
+          "Dir fehlt die Berechtigung, Aufgaben anzulegen. Wende dich an deine Administration.",
+        invalidProject:
+          "Das gewählte Projekt ist nicht mehr verfügbar. Wähle ein anderes Projekt.",
+        saveError:
+          "Die Aufgabe konnte nicht angelegt werden. Prüfe deine Verbindung und versuche es erneut.",
+      },
+      loading: "Projekte und Vorlagen werden geladen …",
+      optionsError:
+        "Die Auswahllisten konnten nicht geladen werden. Prüfe deine Verbindung und versuche es erneut.",
+      retry: "Erneut versuchen",
+      save: "Aufgabe anlegen",
+      saving: "Wird angelegt …",
+      cancel: "Abbrechen",
+      close: "Schließen",
+      created: "Aufgabe „{name}“ wurde angelegt.",
+    },
   },
 
   customerContactsPage: {
