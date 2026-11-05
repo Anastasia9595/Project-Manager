@@ -1,6 +1,6 @@
 import { createItem, readItem, readItems } from "@directus/sdk"
 
-import { createUserClient } from "@/lib/auth/user-client"
+import { createUserClient } from "@/services/directus/client"
 import {
   toDirectusPayload,
   type CustomerContactValues,

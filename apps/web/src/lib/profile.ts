@@ -1,7 +1,7 @@
 import { readMe, updateMe } from "@directus/sdk"
 
 import { createAuthClient } from "@/lib/auth/directus-auth-client"
-import { createUserClient } from "@/lib/auth/user-client"
+import { createUserClient } from "@/services/directus/client"
 import {
   PROFILE_DIRECTUS_FIELDS,
   type DirectusProfile,

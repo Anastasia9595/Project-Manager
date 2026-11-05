@@ -7,7 +7,7 @@ import { WeeklyWorkTime } from "@/components/dashboard/work-time/weekly-work-tim
 import { CustomerContactsTable } from "@/components/dashboard/customer-contacts/customer-contacts-table"
 import { getDictionary } from "@/i18n"
 import { getRequestSession } from "@/lib/auth/request-session"
-import { fetchCustomerContacts } from "@/lib/customer-contacts-repository"
+import { fetchCustomerContacts } from "@/services/customer-contacts/customer-contacts.repository"
 
 const locale = Astro.currentLocale ?? "de"
 const user = Astro.locals.user!

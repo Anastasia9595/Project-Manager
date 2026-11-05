@@ -1,10 +1,6 @@
-import { describe, expect, it, vi } from "vitest"
+import { describe, expect, it } from "vitest"
 
-vi.mock("@/lib/auth/user-client", () => ({ createUserClient: vi.fn() }))
-
-const { toCustomerContact } = await import(
-  "@/lib/customer-contacts-repository"
-)
+import { toCustomerContact } from "@/services/customer-contacts/customer-contacts.mapper"
 
 const location = {
   id: "l1",
@@ -104,7 +100,10 @@ describe("toCustomerContact", () => {
 
     const withoutBoss = toCustomerContact({
       ...row,
-      tenant_users: [user("1", "Buch", "buchhaltung"), user("2", "Assi", "assistenz_von_fr_seifert")],
+      tenant_users: [
+        user("1", "Buch", "buchhaltung"),
+        user("2", "Assi", "assistenz_von_fr_seifert"),
+      ],
     })
     expect(withoutBoss.contactPerson).toBe("A Assi")
   })
