@@ -46,6 +46,99 @@ export default {
       created: "Created",
       completed: "Completed",
     },
+    form: {
+      title: "New project",
+      description:
+        "Create a project for an existing customer. The project number is assigned automatically.",
+      requiredNote: "Fields marked with * are required.",
+      projectSection: "Project",
+      scheduleSection: "Dates",
+      textsSection: "Texts",
+      name: "Project name",
+      tenant: "Customer",
+      tenantUser: "Contact person",
+      mediaType: "Media type",
+      variant: "Variant",
+      printingCompany: "Printing company",
+      circulation: "Circulation",
+      palDate: "PAL date",
+      bufferDays: "Buffer until data handover (days)",
+      deliveryType: "Delivery type",
+      deliveryDate: "Delivery date",
+      distributionDate: "Distribution date",
+      validUntil: "Valid until",
+      calendarLocale: "en",
+      clearDate: "Clear date",
+      projectDescription: "Description",
+      internalNotes: "Internal notes",
+      deliveryTypes: {
+        pal: "PAL",
+        delivery: "Delivery",
+      },
+      placeholders: {
+        name: "For example: Autumn brochure 2027",
+        tenant: "Select customer",
+        tenantUser: "Select contact person",
+        tenantUserNeedsTenant: "Select a customer first",
+        tenantUserNone: "No contact persons for this customer",
+        tenantUserEmpty: "No contact person",
+        mediaType: "Select media type",
+        variant: "Select variant",
+        variantNeedsMediaType: "Select a media type first",
+        variantNone: "No variants for this media type",
+        printingCompany: "Select printing company",
+        circulation: "e.g. 50000",
+        bufferDays: "e.g. 2",
+        date: "Select date",
+        deliveryType: "Select delivery type",
+        deliveryTypeEmpty: "No delivery type",
+        description: "What is this project about?",
+        internalNotes: "Only visible to the team",
+      },
+      validation: {
+        required: {
+          name: "Please enter a project name.",
+          tenantId: "Please select a customer.",
+          mediaTypeId: "Please select a media type.",
+          variantId: "Please select a variant.",
+          printingCompanyId: "Please select a printing company.",
+          circulation: "Please enter a circulation.",
+          palDate: "Please select a PAL date.",
+        },
+        invalid: "Please select an entry from the list.",
+        invalidCirculation:
+          "Please enter a whole number between 1 and 10,000,000.",
+        invalidBufferDays:
+          "Please enter a whole number between 0 and 365 days.",
+        invalidDate: "Please select a valid date.",
+        pastDate:
+          "The PAL date must not be in the past. Choose today or a later day.",
+        tooLong: "The text is too long. Please shorten it.",
+      },
+      errors: {
+        sessionExpired:
+          "Your session has expired. Sign in again and then create the project once more.",
+        forbidden:
+          "You don't have permission to create projects. Please contact your administrator.",
+        invalidVariant:
+          "The selected variant doesn't belong to this media type. Choose a different variant.",
+        invalidContact:
+          "The selected contact person doesn't belong to this customer. Choose a different contact person.",
+        saveError:
+          "The project could not be created. Check your connection and try again.",
+        timeout:
+          "Saving is taking unusually long. Check the project list before you try again.",
+      },
+      loading: "Loading customers, media types and printing companies …",
+      optionsError:
+        "The selection lists could not be loaded. Check your connection and try again.",
+      retry: "Try again",
+      save: "Create project",
+      saving: "Creating …",
+      cancel: "Cancel",
+      close: "Close",
+      created: "Project “{name}” was created.",
+    },
   },
   tasksPage: {
     title: "My Tasks",
@@ -85,6 +178,64 @@ export default {
       high: "High",
       medium: "Medium",
       low: "Low",
+    },
+    form: {
+      title: "New task",
+      description:
+        "Create a task for an open project. A template pre-fills title, description and due date.",
+      requiredNote: "Fields marked with * are required.",
+      template: "Template",
+      name: "Title",
+      project: "Project",
+      dueDate: "Due",
+      calendarLocale: "en",
+      priority: "Priority",
+      taskDescription: "Description",
+      priorities: {
+        high: "High",
+        medium: "Medium",
+        low: "Low",
+      },
+      placeholders: {
+        template: "Select template",
+        templateEmpty: "No template",
+        name: "For example: Check print data",
+        project: "Select project",
+        projectNone: "No open projects available",
+        dueDate: "Select date",
+        description: "What needs to be done?",
+      },
+      validation: {
+        required: {
+          name: "Please enter a title.",
+          projectId: "Please select a project.",
+          dueDate: "Please select a due date.",
+        },
+        invalid: "Please select an entry from the list.",
+        invalidDate: "Please select a valid date.",
+        tooLong: "The text is too long. Please shorten it.",
+      },
+      errors: {
+        sessionExpired:
+          "Your session has expired. Sign in again and then create the task once more.",
+        forbidden:
+          "You don't have permission to create tasks. Please contact your administrator.",
+        invalidProject:
+          "The selected project is no longer available. Choose a different project.",
+        saveError:
+          "The task could not be created. Check your connection and try again.",
+        timeout:
+          "Saving is taking unusually long. Check the task list before you try again.",
+      },
+      loading: "Loading projects and templates …",
+      optionsError:
+        "The selection lists could not be loaded. Check your connection and try again.",
+      retry: "Try again",
+      save: "Create task",
+      saving: "Creating …",
+      cancel: "Cancel",
+      close: "Close",
+      created: "Task “{name}” was created.",
     },
   },
   customerContactsPage: {

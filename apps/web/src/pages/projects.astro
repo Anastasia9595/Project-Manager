@@ -11,13 +11,19 @@ if (!session) return Astro.redirect("/login")
 
 const locale = Astro.currentLocale ?? "de"
 const dict = getDictionary(locale)
+const isInternal = canViewInternalWork(Astro.locals.user!.role)
 const projects = await fetchProjects(session.tokens.accessToken, {
-  includeHandover: canViewInternalWork(Astro.locals.user!.role),
+  includeHandover: isInternal,
 })
 ---
 
 <AppLayout title={dict.sidebar.projects}>
   <div class="p-6">
-    <ProjectsPage client:load locale={locale} projects={projects} />
+    <ProjectsPage
+      client:load
+      locale={locale}
+      projects={projects}
+      canCreate={isInternal}
+    />
   </div>
 </AppLayout>

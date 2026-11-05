@@ -1,10 +1,12 @@
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
+import { toast } from "sonner"
 
 import { Toaster } from "@workspace/ui/components/sonner"
 
 import { CreateButton } from "@/components/shared/create-button"
 import { PageHeader } from "@/components/shared/page-header"
 import { SearchInput } from "@/components/shared/search-input"
+import { NewTaskForm } from "@/components/tasks/new-task/new-task-form"
 import { RunningTimerBar } from "@/components/tasks/running-timer-bar"
 import { TaskGroup } from "@/components/tasks/task-group/task-group"
 import { createTaskColumns } from "@/components/tasks/task-table/task-columns"
@@ -14,6 +16,10 @@ import { useStopTimer } from "@/hooks/use-stop-timer"
 import { useTrackedTasks } from "@/hooks/use-tracked-tasks"
 import { getDictionary } from "@/i18n"
 import type { TrackedTask } from "@/models/task"
+import { fillTemplate } from "@/utils/fill-template"
+
+/** Wartezeit bis zum Neuladen nach dem Anlegen, damit der Toast kurz sichtbar bleibt. */
+const RELOAD_DELAY_MS = 800
 
 export function TasksPage({
   locale,
@@ -24,6 +30,9 @@ export function TasksPage({
 }) {
   const dict = getDictionary(locale).tasksPage
   const [query, setQuery] = useState("")
+  const [formOpen, setFormOpen] = useState(false)
+  const reloadTimer = useRef<number | undefined>(undefined)
+  useEffect(() => () => window.clearTimeout(reloadTimer.current), [])
   const stopTimer = useStopTimer(dict.timer.bookError)
   const { openTaskCount, summary, runningTimer, groups } = useTrackedTasks(
     tasks,
@@ -44,7 +53,10 @@ export function TasksPage({
               onChange={setQuery}
               placeholder={dict.searchPlaceholder}
             />
-            <CreateButton label={dict.newTask} />
+            <CreateButton
+              label={dict.newTask}
+              onClick={() => setFormOpen(true)}
+            />
           </>
         }
       />
@@ -81,6 +93,20 @@ export function TasksPage({
           />
         ))
       )}
+      <NewTaskForm
+        open={formOpen}
+        onClose={() => setFormOpen(false)}
+        onCreated={(name) => {
+          setFormOpen(false)
+          toast.success(fillTemplate(dict.form.created, { name }))
+          // Die Liste wird serverseitig geladen; ein Neuladen zeigt die neue Aufgabe.
+          reloadTimer.current = window.setTimeout(
+            () => window.location.reload(),
+            RELOAD_DELAY_MS
+          )
+        }}
+        t={dict.form}
+      />
       <Toaster />
     </div>
   )
