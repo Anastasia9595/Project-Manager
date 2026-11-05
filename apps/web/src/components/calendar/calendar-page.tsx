@@ -13,8 +13,6 @@ import { CalendarGrid } from "@/components/calendar/calendar-grid"
 import { CalendarViewSwitch } from "@/components/calendar/calendar-view-switch"
 import { ConfirmDialog } from "@/components/shared/confirm-dialog"
 import { PageHeader } from "@/components/shared/page-header"
-import { DUMMY_PROJECTS } from "@/dummy-data/projects"
-import { DUMMY_TRACKED_TASKS } from "@/dummy-data/tracked-tasks"
 import { useNow } from "@/hooks/use-now"
 import { getDictionary } from "@/i18n"
 import {
@@ -41,12 +39,12 @@ import { fillTemplate } from "@/utils/fill-template"
 // "In Bearbeitung" ergibt sich aus der Zeiterfassung (siehe `getStartedTaskIds`).
 export function CalendarPage({
   locale,
-  tasks: initialTasks = DUMMY_TRACKED_TASKS,
-  projects = DUMMY_PROJECTS,
+  tasks: initialTasks,
+  projects,
 }: {
   locale?: string
-  tasks?: TrackedTask[]
-  projects?: Project[]
+  tasks: TrackedTask[]
+  projects: Project[]
 }) {
   const labels = getDictionary(locale).calendarPage
   const today = new Date(useNow(60_000))

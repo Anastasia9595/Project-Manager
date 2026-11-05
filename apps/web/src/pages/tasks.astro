@@ -2,13 +2,19 @@
 import AppLayout from "@/layouts/app.astro"
 import { getDictionary } from "@/i18n"
 import { TasksPage } from "@/components/tasks/tasks-page"
+import { getRequestSession } from "@/lib/auth/request-session"
+import { fetchMyTasks } from "@/services/tasks/tasks.repository"
+
+const session = getRequestSession(Astro.cookies, Astro.locals)
+if (!session) return Astro.redirect("/login")
 
 const locale = Astro.currentLocale ?? "de"
 const dict = getDictionary(locale)
+const tasks = await fetchMyTasks(session.tokens.accessToken)
 ---
 
 <AppLayout title={dict.sidebar.tasks}>
   <div class="p-6">
-    <TasksPage client:load locale={locale} />
+    <TasksPage client:load locale={locale} tasks={tasks} />
   </div>
 </AppLayout>

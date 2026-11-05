@@ -2,13 +2,19 @@
 import AppLayout from "@/layouts/app.astro"
 import { getDictionary } from "@/i18n"
 import { ProjectsPage } from "@/components/projects/projects-page"
+import { getRequestSession } from "@/lib/auth/request-session"
+import { fetchProjects } from "@/services/projects/projects.repository"
+
+const session = getRequestSession(Astro.cookies, Astro.locals)
+if (!session) return Astro.redirect("/login")
 
 const locale = Astro.currentLocale ?? "de"
 const dict = getDictionary(locale)
+const projects = await fetchProjects(session.tokens.accessToken)
 ---
 
 <AppLayout title={dict.sidebar.projects}>
   <div class="p-6">
-    <ProjectsPage client:load locale={locale} />
+    <ProjectsPage client:load locale={locale} projects={projects} />
   </div>
 </AppLayout>

@@ -8,7 +8,6 @@ import { TaskGroup } from "@/components/tasks/task-group/task-group"
 import { createTaskColumns } from "@/components/tasks/task-table/task-columns"
 import { TasksEmptyState } from "@/components/tasks/tasks-empty-state"
 import { TimeSummaryCards } from "@/components/tasks/time-summary/time-summary-cards"
-import { DUMMY_TRACKED_TASKS } from "@/dummy-data/tracked-tasks"
 import { useTrackedTasks } from "@/hooks/use-tracked-tasks"
 import { getDictionary } from "@/i18n"
 import { useTaskTimerStore } from "@/lib/task-timer-store"
@@ -16,10 +15,10 @@ import type { TrackedTask } from "@/models/task"
 
 export function TasksPage({
   locale,
-  tasks = DUMMY_TRACKED_TASKS,
+  tasks,
 }: {
   locale?: string
-  tasks?: TrackedTask[]
+  tasks: TrackedTask[]
 }) {
   const dict = getDictionary(locale).tasksPage
   const [query, setQuery] = useState("")

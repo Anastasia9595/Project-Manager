@@ -8,6 +8,9 @@ import { CustomerContactsTable } from "@/components/dashboard/customer-contacts/
 import { getDictionary } from "@/i18n"
 import { getRequestSession } from "@/lib/auth/request-session"
 import { fetchCustomerContacts } from "@/services/customer-contacts/customer-contacts.repository"
+import { fetchProjects } from "@/services/projects/projects.repository"
+import { fetchMyTasks } from "@/services/tasks/tasks.repository"
+import { fetchWorkWeek } from "@/services/work-time/work-time.repository"
 
 const locale = Astro.currentLocale ?? "de"
 const user = Astro.locals.user!
@@ -15,10 +18,15 @@ const dict = getDictionary(locale)
 
 const session = getRequestSession(Astro.cookies, Astro.locals)
 if (!session) return Astro.redirect("/login")
+const token = session.tokens.accessToken
+const [projects, tasks, workWeek, allCustomerContacts] = await Promise.all([
+  fetchProjects(token),
+  fetchMyTasks(token),
+  fetchWorkWeek(token),
+  fetchCustomerContacts(token),
+])
 // Das Dashboard-Widget zeigt nur die ersten Kunden; die volle Liste steht unter /company-profile.
-const customerContacts = (
-  await fetchCustomerContacts(session.tokens.accessToken)
-).slice(0, 5)
+const customerContacts = allCustomerContacts.slice(0, 5)
 ---
 
 <AppLayout>
@@ -28,16 +36,20 @@ const customerContacts = (
     </h1>
     <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22.5rem]">
       <div class="flex min-w-0 flex-col gap-6">
-        <ProjectStats client:load />
-        <ProjectsTable client:load title={dict.dashboard.myProjects.title} />
+        <ProjectStats client:load projects={projects} />
+        <ProjectsTable
+          client:load
+          projects={projects}
+          title={dict.dashboard.myProjects.title}
+        />
       </div>
       <div class="relative">
-        <MyTasks client:load className="lg:absolute lg:inset-0" />
+        <MyTasks client:load tasks={tasks} className="lg:absolute lg:inset-0" />
       </div>
     </div>
     <div class="@container">
       <div class="grid gap-6 @4xl:grid-cols-2">
-        <WeeklyWorkTime />
+        <WeeklyWorkTime days={workWeek} />
         <CustomerContactsTable
           client:load
           compact
