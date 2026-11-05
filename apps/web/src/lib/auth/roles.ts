@@ -13,7 +13,7 @@ export type SidebarKey = NavItemId
 const SIDEBAR_VISIBILITY: Record<RoleName, SidebarKey[]> = {
   [ROLES.ADMIN]: ALL_NAV_IDS,
   [ROLES.EMPLOYEE]: ALL_NAV_IDS,
-  [ROLES.CUSTOMER]: [NAV_ID.DASHBOARD, NAV_ID.PROJECTS, NAV_ID.COMPANY_PROFILE],
+  [ROLES.CUSTOMER]: [NAV_ID.DASHBOARD, NAV_ID.PROJECTS],
 }
 
 // Fail-closed: unbekannte oder fehlende Rolle sieht nur das Dashboard.

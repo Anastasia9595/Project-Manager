@@ -19,9 +19,10 @@ describe("canViewInternalWork", () => {
 })
 
 describe("visibleSidebarKeys", () => {
-  it("zeigt Kunden keine Aufgaben", () => {
+  it("zeigt Kunden keine Aufgaben und kein Firmenprofil", () => {
     const keys = visibleSidebarKeys(ROLES.CUSTOMER)
     expect(keys).not.toContain(NAV_ID.TASKS)
+    expect(keys).not.toContain(NAV_ID.COMPANY_PROFILE)
     expect(keys).toContain(NAV_ID.PROJECTS)
   })
 })

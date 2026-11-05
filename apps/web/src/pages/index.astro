@@ -25,7 +25,7 @@ const [projects, tasks, workWeek, allCustomerContacts] = await Promise.all([
   fetchProjects(token, { includeHandover: internal }),
   internal ? fetchMyTasks(token) : [],
   internal ? fetchWorkWeek(token) : [],
-  fetchCustomerContacts(token),
+  internal ? fetchCustomerContacts(token) : [],
 ])
 // Das Dashboard-Widget zeigt nur die ersten Kunden; die volle Liste steht unter /company-profile.
 const customerContacts = allCustomerContacts.slice(0, 5)
@@ -61,16 +61,20 @@ const customerContacts = allCustomerContacts.slice(0, 5)
         )
       }
     </div>
-    <div class="@container">
-      <div class={internal ? "grid gap-6 @4xl:grid-cols-2" : "grid gap-6"}>
-        {internal && <WeeklyWorkTime days={workWeek} />}
-        <CustomerContactsTable
-          client:load
-          compact
-          contacts={customerContacts}
-          title={dict.dashboard.customerContacts.title}
-        />
-      </div>
-    </div>
+    {
+      internal && (
+        <div class="@container">
+          <div class="grid gap-6 @4xl:grid-cols-2">
+            <WeeklyWorkTime days={workWeek} />
+            <CustomerContactsTable
+              client:load
+              compact
+              contacts={customerContacts}
+              title={dict.dashboard.customerContacts.title}
+            />
+          </div>
+        </div>
+      )
+    }
   </div>
 </AppLayout>
