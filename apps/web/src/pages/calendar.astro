@@ -2,13 +2,30 @@
 import AppLayout from "@/layouts/app.astro"
 import { getDictionary } from "@/i18n"
 import { CalendarPage } from "@/components/calendar/calendar-page"
+import { canViewInternalWork } from "@/lib/auth/roles"
+import { getRequestSession } from "@/lib/auth/request-session"
+import { fetchProjects } from "@/services/projects/projects.repository"
+import { fetchMyTasks } from "@/services/tasks/tasks.repository"
+
+const session = getRequestSession(Astro.cookies, Astro.locals)
+if (!session) return Astro.redirect("/login")
+if (!canViewInternalWork(Astro.locals.user!.role)) return Astro.redirect("/")
 
 const locale = Astro.currentLocale ?? "de"
 const dict = getDictionary(locale)
+const [projects, tasks] = await Promise.all([
+  fetchProjects(session.tokens.accessToken),
+  fetchMyTasks(session.tokens.accessToken),
+])
 ---
 
 <AppLayout title={dict.sidebar.calendar}>
   <div class="p-6">
-    <CalendarPage client:load locale={locale} />
+    <CalendarPage
+      client:load
+      locale={locale}
+      projects={projects}
+      tasks={tasks}
+    />
   </div>
 </AppLayout>

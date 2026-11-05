@@ -6,6 +6,7 @@ import {
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Button } from "@workspace/ui/components/button"
+import { Toaster } from "@workspace/ui/components/sonner"
 import { useEffect, useState } from "react"
 
 import { CalendarDayView } from "@/components/calendar/calendar-day-view"
@@ -13,9 +14,9 @@ import { CalendarGrid } from "@/components/calendar/calendar-grid"
 import { CalendarViewSwitch } from "@/components/calendar/calendar-view-switch"
 import { ConfirmDialog } from "@/components/shared/confirm-dialog"
 import { PageHeader } from "@/components/shared/page-header"
-import { DUMMY_PROJECTS } from "@/dummy-data/projects"
-import { DUMMY_TRACKED_TASKS } from "@/dummy-data/tracked-tasks"
 import { useNow } from "@/hooks/use-now"
+import { useTaskCompletion } from "@/hooks/use-task-completion"
+import { useStopTimer } from "@/hooks/use-stop-timer"
 import { getDictionary } from "@/i18n"
 import {
   getStartedTaskIds,
@@ -36,19 +37,18 @@ import type { Project } from "@/models/project"
 import type { TrackedTask } from "@/models/task"
 import { fillTemplate } from "@/utils/fill-template"
 
-// Die Daten kommen per Props rein (Default: Dummy-Daten). Für die API-Anbindung
-// Directus-Daten auf `TrackedTask` (inkl. Zeiteinträgen) und `Project` mappen.
 // "In Bearbeitung" ergibt sich aus der Zeiterfassung (siehe `getStartedTaskIds`).
 export function CalendarPage({
   locale,
-  tasks: initialTasks = DUMMY_TRACKED_TASKS,
-  projects = DUMMY_PROJECTS,
+  tasks: initialTasks,
+  projects,
 }: {
   locale?: string
-  tasks?: TrackedTask[]
-  projects?: Project[]
+  tasks: TrackedTask[]
+  projects: Project[]
 }) {
   const labels = getDictionary(locale).calendarPage
+  const saveCompletion = useTaskCompletion(labels.saveError)
   const today = new Date(useNow(60_000))
   const [view, setView] = useState<CalendarView>("month")
   // Bezugsdatum der Ansicht; Monat/Woche/Tag ergeben sich daraus.
@@ -60,7 +60,9 @@ export function CalendarPage({
 
   const activeTimer = useTaskTimerStore((state) => state.active)
   const bookedEntries = useTaskTimerStore((state) => state.entries)
-  const stopTimer = useTaskTimerStore((state) => state.stop)
+  const stopTimer = useStopTimer(
+    getDictionary(locale).tasksPage.timer.bookError
+  )
   // Gespeicherten Timer erst nach dem Mount laden (siehe task-timer-store).
   useEffect(() => rehydrateTaskTimer(), [])
 
@@ -104,6 +106,17 @@ export function CalendarPage({
     )
   }
 
+  // Stellt den Stand vor dem Abhaken exakt wieder her (inkl. Abschlusszeit).
+  function restoreTask(previous: TrackedTask) {
+    setTasks((current) =>
+      current.map((task) =>
+        task.id === previous.id
+          ? { ...task, done: previous.done, completedAt: previous.completedAt }
+          : task
+      )
+    )
+  }
+
   function toggleTask(taskId: string) {
     const task = tasks.find((candidate) => candidate.id === taskId)
     if (!task) return
@@ -114,11 +127,16 @@ export function CalendarPage({
       // Läuft der Timer für diese Aufgabe, Zeit buchen statt weiterlaufen lassen.
       if (activeTimer?.taskId === taskId) stopTimer()
       setTaskDone(taskId, true)
+      void saveCompletion(taskId, true, () => restoreTask(task))
     }
   }
 
   function confirmReopen() {
-    if (taskToReopen) setTaskDone(taskToReopen.id, false)
+    if (taskToReopen) {
+      const previous = taskToReopen
+      setTaskDone(previous.id, false)
+      void saveCompletion(previous.id, false, () => restoreTask(previous))
+    }
     setTaskToReopen(null)
   }
 
@@ -231,6 +249,7 @@ export function CalendarPage({
         confirmLabel={labels.reopenDialog.confirm}
         cancelLabel={labels.reopenDialog.cancel}
       />
+      <Toaster />
     </div>
   )
 }

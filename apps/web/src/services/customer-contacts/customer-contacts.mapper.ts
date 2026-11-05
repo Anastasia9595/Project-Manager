@@ -1,69 +1,8 @@
-import { readItem, readItems } from "@directus/sdk"
-
-import { createUserClient } from "@/lib/auth/user-client"
 import { getProfileAvatarUrl } from "@/lib/profile-fields"
 import type { CustomerContact } from "@/models/customer-contact"
 import { getFullName } from "@/utils/full-name"
 
-type LocationRow = {
-  id: string
-  name: string | null
-  is_primary: boolean | null
-  street: string | null
-  postal_code: number | null
-  city: string | null
-  phone: string | null
-  email: string | null
-  website: string | null
-}
-
-type UserRow = {
-  id: string
-  first_name: string | null
-  last_name: string | null
-  positions: string | null
-  email: string | null
-  phone: string | null
-}
-
-type TenantRow = {
-  id: string
-  tenant_name: string | null
-  logo: string | null
-  main_email: string | null
-  main_phone: string | null
-  notes: string | null
-  date_created: string | null
-  distributor: { name: string | null } | null
-  locations: LocationRow[] | null
-  tenant_users: UserRow[] | null
-}
-
-const FIELDS = [
-  "id",
-  "tenant_name",
-  "logo",
-  "main_email",
-  "main_phone",
-  "notes",
-  "date_created",
-  "distributor.name",
-  "locations.id",
-  "locations.name",
-  "locations.is_primary",
-  "locations.street",
-  "locations.postal_code",
-  "locations.city",
-  "locations.phone",
-  "locations.email",
-  "locations.website",
-  "tenant_users.id",
-  "tenant_users.first_name",
-  "tenant_users.last_name",
-  "tenant_users.positions",
-  "tenant_users.email",
-  "tenant_users.phone",
-]
+import type { LocationRow, TenantRow } from "./customer-contacts.types"
 
 const POSITION_PRIORITY = [
   "management",
@@ -122,29 +61,4 @@ export function toCustomerContact(
       email: location.email ?? "",
     })),
   }
-}
-
-// Zugriffe laufen mit dem Token der angemeldeten Person, damit ihre Directus-Rolle
-// bestimmt, welche Kunden sie sehen.
-
-export async function fetchCustomerContacts(
-  accessToken: string
-): Promise<CustomerContact[]> {
-  const client = await createUserClient(accessToken)
-  const rows = (await client.request(
-    readItems("tenants", { fields: FIELDS, sort: ["tenant_name"], limit: -1 })
-  )) as unknown as TenantRow[]
-  return rows.map((row) => toCustomerContact(row))
-}
-
-export async function fetchCustomerContact(
-  accessToken: string,
-  id: string,
-  positionLabels?: Record<string, string>
-): Promise<CustomerContact> {
-  const client = await createUserClient(accessToken)
-  const row = (await client.request(
-    readItem("tenants", id, { fields: FIELDS })
-  )) as unknown as TenantRow
-  return toCustomerContact(row, positionLabels)
 }

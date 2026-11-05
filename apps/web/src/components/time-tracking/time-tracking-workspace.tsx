@@ -1,4 +1,5 @@
 import { useMemo } from "react"
+import { toast } from "sonner"
 import { Toaster } from "@workspace/ui/components/sonner"
 
 import { BookingForm } from "@/components/time-tracking/booking-form/booking-form"
@@ -6,8 +7,6 @@ import { revealBookingForm } from "@/components/time-tracking/booking-form/booki
 import { WeekOverviewCard } from "@/components/time-tracking/week-overview/week-overview-card"
 import type { CellTarget } from "@/components/time-tracking/week-overview/types"
 import { WeekStatusCard } from "@/components/time-tracking/week-status-card"
-import { DUMMY_PROJECTS } from "@/dummy-data/projects"
-import { DUMMY_TRACKED_TASKS } from "@/dummy-data/tracked-tasks"
 import { useBookingActions } from "@/hooks/use-booking-actions"
 import { useBookingForm } from "@/hooks/use-booking-form"
 import { useSelectedWeek } from "@/hooks/use-selected-week"
@@ -17,7 +16,10 @@ import { useWeekBookings } from "@/hooks/use-week-bookings"
 import { useWeekOverview } from "@/hooks/use-week-overview"
 import { getDictionary } from "@/i18n"
 import { getIsoWeek } from "@/lib/calendar/calendar-view"
-import { getDefaultBookingDate, isBookableDay } from "@/lib/time-tracking/bookable-days"
+import {
+  getDefaultBookingDate,
+  isBookableDay,
+} from "@/lib/time-tracking/bookable-days"
 import {
   entriesWithin,
   minutesOnDayExcept,
@@ -31,20 +33,19 @@ import type { TrackedTask } from "@/models/task"
 import type { TimeBooking } from "@/models/time-booking"
 import { downloadCsvFile } from "@/utils/download-file"
 
-// Daten kommen per Props (Default: Dummy-Daten). Für Directus Projekte und Aufgaben
-// auf `Project`/`TrackedTask` mappen; Zeitbuchungen laufen über das Repository.
+// Projekte und Aufgaben kommen per Props; Zeitbuchungen laufen über das Repository.
 export function TimeTrackingWorkspace({
   locale,
   initialWeek,
   userId,
-  projects = DUMMY_PROJECTS,
-  tasks = DUMMY_TRACKED_TASKS,
+  projects,
+  tasks,
 }: {
   locale?: string
   initialWeek: string | null
   userId: string
-  projects?: Project[]
-  tasks?: TrackedTask[]
+  projects: Project[]
+  tasks: TrackedTask[]
 }) {
   const dictionary = getDictionary(locale)
   const labels = dictionary.timeTrackingPage
@@ -52,7 +53,9 @@ export function TimeTrackingWorkspace({
   const weekStart = useSelectedWeek(initialWeek, today)
   const workdays = useMemo(() => getWorkweekDays(weekStart), [weekStart])
 
-  const bookings = useWeekBookings(userId, weekStart, today)
+  const bookings = useWeekBookings(userId, weekStart, today, () =>
+    toast.error(labels.toast.error)
+  )
   const startedTaskIds = useStartedTaskIds(tasks, bookings.bookedTaskIds)
   const overview = useWeekOverview({
     entries: bookings.entries,
@@ -65,7 +68,12 @@ export function TimeTrackingWorkspace({
     toDayKey(getDefaultBookingDate(workdays, today)),
     toDayKey(weekStart)
   )
-  const actions = useBookingActions({ bookings, form, userId, labels: labels.toast })
+  const actions = useBookingActions({
+    bookings,
+    form,
+    userId,
+    labels: labels.toast,
+  })
 
   function addFromCell({ projectId, taskId, date }: CellTarget) {
     form.prefill({ projectId, taskId, date: toDayKey(date) })
@@ -81,7 +89,12 @@ export function TimeTrackingWorkspace({
     downloadCsvFile(
       weekCsvFileName(weekStart),
       // Wie Tabelle und Summen: nur Mo-Fr.
-      buildWeekCsv(entriesWithin(bookings.entries, workdays), projects, tasks, labels.csv)
+      buildWeekCsv(
+        entriesWithin(bookings.entries, workdays),
+        projects,
+        tasks,
+        labels.csv
+      )
     )
   }
 
@@ -91,7 +104,10 @@ export function TimeTrackingWorkspace({
         weekNumber={getIsoWeek(weekStart)}
         actualMinutes={overview.totals.week}
         targetMinutes={overview.totals.weekTarget}
-        percent={progressPercent(overview.totals.week, overview.totals.weekTarget)}
+        percent={progressPercent(
+          overview.totals.week,
+          overview.totals.weekTarget
+        )}
         todayMinutes={sumMinutes(bookings.todayEntries)}
         todayCount={bookings.todayEntries.length}
         labels={labels.status}

@@ -64,6 +64,7 @@ export default {
       start: "Start time tracking",
       stopTask: "Stop time tracking",
       locked: "Time tracking is already running",
+      bookError: "The time could not be booked.",
     },
     groups: {
       overdue: "Overdue",
@@ -254,6 +255,7 @@ export default {
   calendarPage: {
     title: "Calendar",
     subtitle: "Deadlines and dates at a glance",
+    saveError: "The task could not be saved.",
     views: {
       month: "Month",
       week: "Week",
@@ -359,7 +361,8 @@ export default {
         duration: "Enter a duration of at least 1 minute.",
         durationInvalid: "Enter whole hours and 0 to 59 minutes.",
         description: "The description can be at most {max} characters long.",
-        dailyLimit: "More than {hours} hours on one day – please check your input.",
+        dailyLimit:
+          "More than {hours} hours on one day – please check your input.",
       },
     },
     overview: {
@@ -422,6 +425,7 @@ export default {
     myTasks: {
       title: "My Tasks",
       noTasks: "No tasks to complete.",
+      saveError: "The task could not be saved.",
     },
     weeklyWorkTime: {
       title: "Weekly Work Time",

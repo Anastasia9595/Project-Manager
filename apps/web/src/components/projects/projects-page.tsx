@@ -8,7 +8,6 @@ import {
 import { CreateButton } from "@/components/shared/create-button"
 import { PageHeader } from "@/components/shared/page-header"
 import { SearchInput } from "@/components/shared/search-input"
-import { DUMMY_PROJECTS } from "@/dummy-data/projects"
 import { getDictionary } from "@/i18n"
 import type { Project, ProjectStatus } from "@/models/project"
 
@@ -16,7 +15,8 @@ function matchesQuery(project: Project, query: string): boolean {
   const needle = query.trim().toLowerCase()
   if (!needle) return true
   return (
-    project.name.toLowerCase().includes(needle) || project.customer.toLowerCase().includes(needle)
+    project.name.toLowerCase().includes(needle) ||
+    project.customer.toLowerCase().includes(needle)
   )
 }
 
@@ -29,10 +29,10 @@ const STATUS_FILTERS: StatusFilter[] = ["all", "active", "created", "completed"]
 
 export function ProjectsPage({
   locale,
-  projects = DUMMY_PROJECTS,
+  projects,
 }: {
   locale?: string
-  projects?: Project[]
+  projects: Project[]
 }) {
   const dict = getDictionary(locale).projectsPage
   const [query, setQuery] = useState("")
@@ -42,17 +42,20 @@ export function ProjectsPage({
   // Die Zähler der Filter-Badges beziehen sich auf die Suchtreffer, damit sie zur Tabelle passen.
   const searchedProjects = useMemo(
     () => projects.filter((project) => matchesQuery(project, query)),
-    [projects, query],
+    [projects, query]
   )
 
-  const filterOptions: StatusFilterOption<StatusFilter>[] = STATUS_FILTERS.map((value) => ({
-    value,
-    label: dict.filters[value],
-    count:
-      value === "all"
-        ? searchedProjects.length
-        : searchedProjects.filter((project) => project.status === value).length,
-  }))
+  const filterOptions: StatusFilterOption<StatusFilter>[] = STATUS_FILTERS.map(
+    (value) => ({
+      value,
+      label: dict.filters[value],
+      count:
+        value === "all"
+          ? searchedProjects.length
+          : searchedProjects.filter((project) => project.status === value)
+              .length,
+    })
+  )
 
   const filteredProjects =
     statusFilter === "all"

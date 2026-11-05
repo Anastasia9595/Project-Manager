@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 
 import { createTimeBookingRepository } from "@/lib/time-tracking/repository"
+import { safeReload } from "@/lib/time-tracking/safe-reload"
 import { entriesOn } from "@/lib/time-tracking/calculations/totals"
 import { parseDayKey, startOfWeek, toDayKey } from "@/lib/week"
 import type { TimeBooking, TimeBookingInput } from "@/models/time-booking"
@@ -11,7 +12,7 @@ type BookingsState = {
   /** Buchungen von heute – auch wenn gerade eine andere Woche angezeigt wird. */
   todayEntries: TimeBooking[]
   bookedTaskIds: Set<string>
-  /** false bis zum ersten Laden – erst im Browser, weil die Daten im localStorage liegen. */
+  /** false bis zum ersten Laden – auch nach einem Ladefehler (dann mit leeren Daten). */
   loaded: boolean
 }
 
@@ -23,8 +24,16 @@ const INITIAL_STATE: BookingsState = {
 }
 
 /** Lädt die Buchungen einer Person über das Repository und lädt nach jeder Änderung neu. */
-export function useWeekBookings(userId: string, weekStart: Date, today: Date) {
-  const repository = useMemo(() => createTimeBookingRepository(userId), [userId])
+export function useWeekBookings(
+  userId: string,
+  weekStart: Date,
+  today: Date,
+  onLoadError: () => void
+) {
+  const repository = useMemo(
+    () => createTimeBookingRepository(userId),
+    [userId]
+  )
   const [state, setState] = useState(INITIAL_STATE)
   const weekKey = toDayKey(weekStart)
   const todayKey = toDayKey(today)
@@ -53,20 +62,37 @@ export function useWeekBookings(userId: string, weekStart: Date, today: Date) {
   // Wochenwechsel nicht die gerade angezeigte Woche mit alten Daten.
   const latestRequest = useRef(0)
   const latestLoad = useRef(loadSnapshot)
+  const latestOnError = useRef(onLoadError)
+
+  useEffect(() => {
+    latestOnError.current = onLoadError
+  }, [onLoadError])
 
   useEffect(() => {
     latestLoad.current = loadSnapshot
     const request = ++latestRequest.current
-    void loadSnapshot().then((next) => {
-      if (request === latestRequest.current) setState(next)
-    })
+    loadSnapshot()
+      .then((next) => {
+        if (request === latestRequest.current) setState(next)
+      })
+      .catch(() => {
+        if (request !== latestRequest.current) return
+        // Ohne Daten trotzdem „geladen“, sonst bleibt die Ansicht ein Skeleton.
+        setState({ ...INITIAL_STATE, loaded: true })
+        latestOnError.current()
+      })
   }, [loadSnapshot])
 
   /** Nach Änderungen neu laden – immer für die aktuell angezeigte Woche. */
-  async function reload() {
-    const request = ++latestRequest.current
-    const next = await latestLoad.current()
-    if (request === latestRequest.current) setState(next)
+  function reload() {
+    return safeReload(
+      async () => {
+        const request = ++latestRequest.current
+        const next = await latestLoad.current()
+        if (request === latestRequest.current) setState(next)
+      },
+      () => latestOnError.current()
+    )
   }
 
   async function create(input: TimeBookingInput): Promise<TimeBooking> {

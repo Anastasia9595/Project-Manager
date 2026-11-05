@@ -1,8 +1,9 @@
 "use client"
 
+import { Toaster } from "@workspace/ui/components/sonner"
 import { useState } from "react"
 
-import { DUMMY_TASKS } from "@/dummy-data/tasks"
+import { useTaskCompletion } from "@/hooks/use-task-completion"
 import { sortByPriority } from "@/lib/tasks"
 import { formatDayLabel, isSameDay, startOfWeek } from "@/lib/week"
 import type { Task } from "@/models/task"
@@ -10,24 +11,39 @@ import { TaskListItem } from "./task-list-item"
 import { TaskWeekStrip } from "./task-week-strip"
 
 type MyTasksProps = {
-  tasks?: Task[]
+  tasks: Task[]
+  saveError: string
   className?: string
 }
 
-export function MyTasks({ tasks: initialTasks = DUMMY_TASKS, className = "" }: MyTasksProps) {
+export function MyTasks({
+  tasks: initialTasks,
+  saveError,
+  className = "",
+}: MyTasksProps) {
+  const saveCompletion = useTaskCompletion(saveError)
   const [today] = useState(() => new Date())
   const [selectedDate, setSelectedDate] = useState(today)
   const [weekStart, setWeekStart] = useState(() => startOfWeek(today))
   const [tasks, setTasks] = useState(initialTasks)
 
   const isToday = isSameDay(selectedDate, today)
-  const visibleTasks = sortByPriority(tasks.filter((task) => isSameDay(task.dueDate, selectedDate)))
+  const visibleTasks = sortByPriority(
+    tasks.filter((task) => isSameDay(task.dueDate, selectedDate))
+  )
 
-  // TODO: Erledigt-Status in Directus speichern, aktuell nur lokal.
-  function toggleTask(id: string) {
+  function setDone(id: string, done: boolean) {
     setTasks((current) =>
-      current.map((task) => (task.id === id ? { ...task, done: !task.done } : task))
+      current.map((task) => (task.id === id ? { ...task, done } : task))
     )
+  }
+
+  function toggleTask(id: string) {
+    const task = tasks.find((candidate) => candidate.id === id)
+    if (!task) return
+    const previousDone = task.done
+    setDone(id, !previousDone)
+    void saveCompletion(id, !previousDone, () => setDone(id, previousDone))
   }
 
   return (
@@ -45,12 +61,18 @@ export function MyTasks({ tasks: initialTasks = DUMMY_TASKS, className = "" }: M
       <div className="flex min-h-0 flex-1 flex-col gap-3">
         <div>
           <h3 className="text-sm font-bold text-foreground">
-            {isToday ? "Aufgaben für heute" : `Aufgaben für ${formatDayLabel(selectedDate)}`}
+            {isToday
+              ? "Aufgaben für heute"
+              : `Aufgaben für ${formatDayLabel(selectedDate)}`}
           </h3>
-          <p className="text-xs text-muted-foreground">Sortiert nach Priorität (Hoch → Niedrig)</p>
+          <p className="text-xs text-muted-foreground">
+            Sortiert nach Priorität (Hoch → Niedrig)
+          </p>
         </div>
         {visibleTasks.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Keine Aufgaben für diesen Tag.</p>
+          <p className="text-sm text-muted-foreground">
+            Keine Aufgaben für diesen Tag.
+          </p>
         ) : (
           <ul className="flex max-h-96 min-h-0 flex-col gap-3 overflow-y-auto lg:max-h-none lg:flex-1">
             {visibleTasks.map((task) => (
@@ -59,6 +81,7 @@ export function MyTasks({ tasks: initialTasks = DUMMY_TASKS, className = "" }: M
           </ul>
         )}
       </div>
+      <Toaster />
     </section>
   )
 }
