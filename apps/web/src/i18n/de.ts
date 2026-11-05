@@ -125,6 +125,8 @@ const de = {
           "Die gewählte Kontaktperson gehört nicht zu diesem Kunden. Wähle eine andere Kontaktperson.",
         saveError:
           "Das Projekt konnte nicht angelegt werden. Prüfe deine Verbindung und versuche es erneut.",
+        timeout:
+          "Das Speichern dauert ungewöhnlich lange. Prüfe die Projektliste, bevor du es noch einmal versuchst.",
       },
       loading: "Kunden, Medientypen und Druckereien werden geladen …",
       optionsError:

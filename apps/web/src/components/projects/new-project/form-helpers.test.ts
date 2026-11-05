@@ -76,6 +76,7 @@ describe("getSubmitErrorMessage", () => {
     expect(getSubmitErrorMessage("forbidden", e)).toBe(e.forbidden)
     expect(getSubmitErrorMessage("invalid_variant", e)).toBe(e.invalidVariant)
     expect(getSubmitErrorMessage("invalid_contact", e)).toBe(e.invalidContact)
-    expect(getSubmitErrorMessage("network_error", e)).toBe(e.saveError)
+    expect(getSubmitErrorMessage("network_error", e)).toBe(e.timeout)
+    expect(getSubmitErrorMessage("server_error", e)).toBe(e.saveError)
   })
 })
