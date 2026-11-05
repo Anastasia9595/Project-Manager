@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { toast } from "sonner"
 
 import { Toaster } from "@workspace/ui/components/sonner"
@@ -48,6 +48,8 @@ export function ProjectsPage({
   const dict = getDictionary(locale).projectsPage
   const [query, setQuery] = useState("")
   const [formOpen, setFormOpen] = useState(false)
+  const reloadTimer = useRef<number | undefined>(undefined)
+  useEffect(() => () => window.clearTimeout(reloadTimer.current), [])
 
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all")
 
@@ -115,7 +117,10 @@ export function ProjectsPage({
             setFormOpen(false)
             toast.success(fillTemplate(dict.form.created, { name }))
             // Die Liste wird serverseitig geladen; ein Neuladen zeigt das neue Projekt.
-            window.setTimeout(() => window.location.reload(), RELOAD_DELAY_MS)
+            reloadTimer.current = window.setTimeout(
+              () => window.location.reload(),
+              RELOAD_DELAY_MS
+            )
           }}
           t={dict.form}
         />
