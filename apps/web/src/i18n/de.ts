@@ -48,7 +48,7 @@ const de = {
     form: {
       title: "Neues Projekt",
       description:
-        "Lege eine Druckstrecke für einen bestehenden Kunden an. Die Projektnummer wird automatisch vergeben.",
+        "Lege ein Projekt für einen bestehenden Kunden an. Die Projektnummer wird automatisch vergeben.",
       requiredNote: "Felder mit * sind Pflichtfelder.",
       projectSection: "Projekt",
       scheduleSection: "Termine",
@@ -61,7 +61,7 @@ const de = {
       printingCompany: "Druckerei",
       circulation: "Auflage",
       palDate: "PAL-Datum",
-      bufferDays: "Pufferzeit (Tage)",
+      bufferDays: "Puffer bis Datenübergabe (Tage)",
       deliveryType: "Lieferart",
       deliveryDate: "Lieferdatum",
       distributionDate: "Verteildatum",
@@ -86,8 +86,8 @@ const de = {
         variantNeedsMediaType: "Zuerst Medientyp auswählen",
         variantNone: "Keine Varianten für diesen Medientyp",
         printingCompany: "Druckerei auswählen",
-        circulation: "50000",
-        bufferDays: "2",
+        circulation: "z. B. 50000",
+        bufferDays: "z. B. 2",
         date: "Datum auswählen",
         deliveryType: "Lieferart auswählen",
         deliveryTypeEmpty: "Ohne Lieferart",
@@ -109,8 +109,9 @@ const de = {
           "Bitte gib eine ganze Zahl zwischen 1 und 10.000.000 ein.",
         invalidBufferDays:
           "Bitte gib eine ganze Zahl zwischen 0 und 365 Tagen ein.",
-        invalidDate: "Bitte gib ein gültiges Datum ein.",
-        pastDate: "Das PAL-Datum darf nicht in der Vergangenheit liegen.",
+        invalidDate: "Bitte wähle ein gültiges Datum aus.",
+        pastDate:
+          "Das PAL-Datum darf nicht in der Vergangenheit liegen. Wähle heute oder einen späteren Tag.",
         tooLong: "Der Text ist zu lang. Bitte kürze ihn.",
       },
       errors: {
@@ -128,7 +129,7 @@ const de = {
       loading: "Kunden, Medientypen und Druckereien werden geladen …",
       optionsError:
         "Die Auswahllisten konnten nicht geladen werden. Prüfe deine Verbindung und versuche es erneut.",
-      retry: "Erneut laden",
+      retry: "Erneut versuchen",
       save: "Projekt anlegen",
       saving: "Wird angelegt …",
       cancel: "Abbrechen",
