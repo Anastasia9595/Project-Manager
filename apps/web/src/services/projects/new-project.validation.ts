@@ -20,6 +20,8 @@ export type ProjectValidationErrors = Partial<
 >
 
 const INTEGER = /^\d+$/
+// Integer-IDs höchstens 9 Stellen, damit sie sicher in ein Postgres-integer passen.
+const INTEGER_ID = /^\d{1,9}$/
 
 /** Wird im Browser und in der API-Route genutzt. Längen werden am Rohwert gemessen (wie maxLength). */
 export function validateNewProject(
@@ -37,11 +39,11 @@ export function validateNewProject(
   }
 
   if (!values.printingCompanyId) errors.printingCompanyId = "required"
-  else if (!INTEGER.test(values.printingCompanyId)) {
+  else if (!INTEGER_ID.test(values.printingCompanyId)) {
     errors.printingCompanyId = "invalid"
   }
 
-  if (values.tenantUserId && !INTEGER.test(values.tenantUserId)) {
+  if (values.tenantUserId && !INTEGER_ID.test(values.tenantUserId)) {
     errors.tenantUserId = "invalid"
   }
 

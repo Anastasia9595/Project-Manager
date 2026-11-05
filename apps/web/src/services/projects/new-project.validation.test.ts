@@ -67,6 +67,14 @@ describe("validateNewProject", () => {
   it("checks ids, optional dates and deliveryType", () => {
     expect(check({ tenantId: "abc" })).toEqual({ tenantId: "invalid" })
     expect(check({ tenantUserId: "x" })).toEqual({ tenantUserId: "invalid" })
+    expect(check({ tenantUserId: "9999999999" })).toEqual({
+      tenantUserId: "invalid",
+    })
+    expect(check({ tenantUserId: "123456789" })).toEqual({})
+    expect(check({ printingCompanyId: "9999999999" })).toEqual({
+      printingCompanyId: "invalid",
+    })
+    expect(check({ printingCompanyId: "123456789" })).toEqual({})
     expect(check({ deliveryDate: "2026-13-01" })).toEqual({
       deliveryDate: "invalid",
     })
