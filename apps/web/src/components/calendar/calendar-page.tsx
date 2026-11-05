@@ -16,6 +16,7 @@ import { ConfirmDialog } from "@/components/shared/confirm-dialog"
 import { PageHeader } from "@/components/shared/page-header"
 import { useNow } from "@/hooks/use-now"
 import { useTaskCompletion } from "@/hooks/use-task-completion"
+import { useStopTimer } from "@/hooks/use-stop-timer"
 import { getDictionary } from "@/i18n"
 import {
   getStartedTaskIds,
@@ -59,7 +60,9 @@ export function CalendarPage({
 
   const activeTimer = useTaskTimerStore((state) => state.active)
   const bookedEntries = useTaskTimerStore((state) => state.entries)
-  const stopTimer = useTaskTimerStore((state) => state.stop)
+  const stopTimer = useStopTimer(
+    getDictionary(locale).tasksPage.timer.bookError
+  )
   // Gespeicherten Timer erst nach dem Mount laden (siehe task-timer-store).
   useEffect(() => rehydrateTaskTimer(), [])
 

@@ -64,6 +64,7 @@ const de = {
       start: "Zeiterfassung starten",
       stopTask: "Zeiterfassung stoppen",
       locked: "Es läuft bereits eine Zeiterfassung",
+      bookError: "Die Zeit konnte nicht gebucht werden.",
     },
     groups: {
       overdue: "Überfällig",

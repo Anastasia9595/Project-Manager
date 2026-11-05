@@ -3,7 +3,7 @@ import { createJSONStorage, persist } from "zustand/middleware"
 
 import type { TimeEntry } from "@/models/task"
 
-// TODO: Zeiteinträge in Directus speichern - aktuell nur im localStorage dieses Browsers.
+// Der laufende Timer liegt im Browser; fertige Einträge speichert der Aufrufer in Directus (siehe useStopTimer).
 // Der Store ist global: es darf immer nur genau ein Timer laufen, egal wie viele
 // Komponenten ihn anzeigen.
 
@@ -14,12 +14,14 @@ export type ActiveTimer = {
 
 type TaskTimerState = {
   active: ActiveTimer | null
-  /** Per Timer gebuchte Einträge (zusätzlich zu denen aus den Aufgabendaten). */
+  /** Sitzungszustand: in dieser Sitzung beendete Einträge für die sofortige Anzeige; nach dem Neuladen kommen sie aus Directus. */
   entries: TimeEntry[]
   /** Startet den Timer - wird ignoriert, solange bereits ein Timer läuft. */
   start: (taskId: string) => void
-  /** Stoppt den laufenden Timer und bucht die Dauer auf dessen Aufgabe. */
-  stop: () => void
+  /** Stoppt den laufenden Timer und gibt den fertigen Eintrag zurück (null, wenn keiner lief). */
+  stop: () => TimeEntry | null
+  /** Entfernt einen Eintrag wieder, z. B. wenn das Buchen fehlgeschlagen ist. */
+  discardEntry: (entry: TimeEntry) => void
 }
 
 const STORAGE_KEY = "project-tracker:task-timer"
@@ -35,27 +37,29 @@ export const useTaskTimerStore = create<TaskTimerState>()(
       },
       stop: () => {
         const { active, entries } = get()
-        if (!active) return
+        if (!active) return null
         const seconds = Math.max(
           0,
           Math.round((Date.now() - active.startedAt) / 1000)
         )
-        set({
-          active: null,
-          entries: [
-            ...entries,
-            {
-              taskId: active.taskId,
-              startedAt: new Date(active.startedAt),
-              seconds,
-            },
-          ],
-        })
+        const entry = {
+          taskId: active.taskId,
+          startedAt: new Date(active.startedAt),
+          seconds,
+        }
+        set({ active: null, entries: [...entries, entry] })
+        return entry
       },
+      discardEntry: (entry) =>
+        set({ entries: get().entries.filter((item) => item !== entry) }),
     }),
     {
       name: STORAGE_KEY,
-      version: 1,
+      version: 2,
+      // Alte gespeicherte Einträge verwerfen, sie liegen jetzt in Directus.
+      migrate: (state) => ({
+        active: (state as { active?: ActiveTimer | null }).active ?? null,
+      }),
       storage: createJSONStorage(() => localStorage, {
         // Dates werden als ISO-String gespeichert und hier wieder zu Date.
         reviver: (key, value) =>
@@ -63,7 +67,7 @@ export const useTaskTimerStore = create<TaskTimerState>()(
             ? new Date(value)
             : value,
       }),
-      partialize: ({ active, entries }) => ({ active, entries }),
+      partialize: ({ active }) => ({ active }),
       // Erst im Browser nach dem Hydrieren laden (siehe `rehydrateTaskTimer`),
       // sonst weicht das Client-Rendering vom Server-HTML ab.
       skipHydration: true,

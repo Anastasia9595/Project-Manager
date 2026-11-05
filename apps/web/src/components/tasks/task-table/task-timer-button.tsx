@@ -5,6 +5,7 @@ import { Button } from "@workspace/ui/components/button"
 
 import type { TaskRow } from "@/models/task"
 import type { Dictionary } from "@/i18n"
+import { useStopTimer } from "@/hooks/use-stop-timer"
 import { useTaskTimerStore } from "@/lib/task-timer-store"
 
 export function TaskTimerButton({
@@ -15,7 +16,7 @@ export function TaskTimerButton({
   labels: Dictionary["tasksPage"]["timer"]
 }) {
   const start = useTaskTimerStore((state) => state.start)
-  const stop = useTaskTimerStore((state) => state.stop)
+  const stop = useStopTimer(labels.bookError)
   const label = task.isRunning
     ? labels.stopTask
     : task.canStart

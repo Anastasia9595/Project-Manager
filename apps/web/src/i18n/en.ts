@@ -64,6 +64,7 @@ export default {
       start: "Start time tracking",
       stopTask: "Stop time tracking",
       locked: "Time tracking is already running",
+      bookError: "The time could not be booked.",
     },
     groups: {
       overdue: "Overdue",

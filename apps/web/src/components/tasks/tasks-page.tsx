@@ -1,5 +1,7 @@
 import { useMemo, useState } from "react"
 
+import { Toaster } from "@workspace/ui/components/sonner"
+
 import { CreateButton } from "@/components/shared/create-button"
 import { PageHeader } from "@/components/shared/page-header"
 import { SearchInput } from "@/components/shared/search-input"
@@ -8,9 +10,9 @@ import { TaskGroup } from "@/components/tasks/task-group/task-group"
 import { createTaskColumns } from "@/components/tasks/task-table/task-columns"
 import { TasksEmptyState } from "@/components/tasks/tasks-empty-state"
 import { TimeSummaryCards } from "@/components/tasks/time-summary/time-summary-cards"
+import { useStopTimer } from "@/hooks/use-stop-timer"
 import { useTrackedTasks } from "@/hooks/use-tracked-tasks"
 import { getDictionary } from "@/i18n"
-import { useTaskTimerStore } from "@/lib/task-timer-store"
 import type { TrackedTask } from "@/models/task"
 
 export function TasksPage({
@@ -22,7 +24,7 @@ export function TasksPage({
 }) {
   const dict = getDictionary(locale).tasksPage
   const [query, setQuery] = useState("")
-  const stopTimer = useTaskTimerStore((state) => state.stop)
+  const stopTimer = useStopTimer(dict.timer.bookError)
   const { openTaskCount, summary, runningTimer, groups } = useTrackedTasks(
     tasks,
     query
@@ -79,6 +81,7 @@ export function TasksPage({
           />
         ))
       )}
+      <Toaster />
     </div>
   )
 }
