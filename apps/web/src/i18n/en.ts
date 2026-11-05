@@ -179,6 +179,64 @@ export default {
       medium: "Medium",
       low: "Low",
     },
+    form: {
+      title: "New task",
+      description:
+        "Create a task for an open project. A template pre-fills title, description and due date.",
+      requiredNote: "Fields marked with * are required.",
+      template: "Template",
+      name: "Title",
+      project: "Project",
+      dueDate: "Due",
+      calendarLocale: "en",
+      priority: "Priority",
+      taskDescription: "Description",
+      priorities: {
+        high: "High",
+        medium: "Medium",
+        low: "Low",
+      },
+      placeholders: {
+        template: "Select template",
+        templateEmpty: "No template",
+        name: "For example: Check print data",
+        project: "Select project",
+        projectNone: "No open projects available",
+        dueDate: "Select date",
+        description: "What needs to be done?",
+      },
+      validation: {
+        required: {
+          name: "Please enter a title.",
+          projectId: "Please select a project.",
+          dueDate: "Please select a due date.",
+        },
+        invalid: "Please select an entry from the list.",
+        invalidDate: "Please select a valid date.",
+        tooLong: "The text is too long. Please shorten it.",
+      },
+      errors: {
+        sessionExpired:
+          "Your session has expired. Sign in again and then create the task once more.",
+        forbidden:
+          "You don't have permission to create tasks. Please contact your administrator.",
+        invalidProject:
+          "The selected project is no longer available. Choose a different project.",
+        saveError:
+          "The task could not be created. Check your connection and try again.",
+        timeout:
+          "Saving is taking unusually long. Check the task list before you try again.",
+      },
+      loading: "Loading projects and templates …",
+      optionsError:
+        "The selection lists could not be loaded. Check your connection and try again.",
+      retry: "Try again",
+      save: "Create task",
+      saving: "Creating …",
+      cancel: "Cancel",
+      close: "Close",
+      created: "Task “{name}” was created.",
+    },
   },
   customerContactsPage: {
     title: "Customer Contacts",
