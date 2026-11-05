@@ -14,8 +14,10 @@ const json = (body: unknown, method = "POST") =>
     method,
     body: JSON.stringify(body),
   })
+const ID = "3f2b8c1e-9a4d-4e6f-8b7a-1c2d3e4f5a6b"
+
 const booking = {
-  id: "e1",
+  id: ID,
   project: "p1",
   task: "t1",
   date: "2026-11-04",
@@ -56,18 +58,18 @@ describe("handleUpdateEntry", () => {
     const update = vi.fn().mockResolvedValue(booking)
     const response = await handleUpdateEntry(
       json({ description: "x" }, "PATCH"),
-      "e1",
+      ID,
       "token",
       update
     )
-    expect(update).toHaveBeenCalledWith("token", "e1", { description: "x" })
+    expect(update).toHaveBeenCalledWith("token", ID, { description: "x" })
     expect(response.status).toBe(200)
   })
 
   it("lehnt leere Änderungen mit 400 ab", async () => {
     const response = await handleUpdateEntry(
       json({}, "PATCH"),
-      "e1",
+      ID,
       "token",
       vi.fn()
     )
@@ -75,17 +77,40 @@ describe("handleUpdateEntry", () => {
   })
 })
 
+describe("handleUpdateEntry mit ungültiger id", () => {
+  it("antwortet mit 400, ohne Directus aufzurufen", async () => {
+    const update = vi.fn()
+    const response = await handleUpdateEntry(
+      json({ description: "x" }, "PATCH"),
+      "..%2Fusers",
+      "token",
+      update
+    )
+    expect(response.status).toBe(400)
+    expect(await response.json()).toEqual({ error: "invalid_id" })
+    expect(update).not.toHaveBeenCalled()
+  })
+})
+
 describe("handleDeleteEntry", () => {
+  it("lehnt ungültige ids mit 400 ab, ohne Directus aufzurufen", async () => {
+    const remove = vi.fn()
+    const response = await handleDeleteEntry("e1", "token", remove)
+    expect(response.status).toBe(400)
+    expect(await response.json()).toEqual({ error: "invalid_id" })
+    expect(remove).not.toHaveBeenCalled()
+  })
+
   it("löscht und antwortet mit 204", async () => {
     const remove = vi.fn().mockResolvedValue(undefined)
-    const response = await handleDeleteEntry("e1", "token", remove)
-    expect(remove).toHaveBeenCalledWith("token", "e1")
+    const response = await handleDeleteEntry(ID, "token", remove)
+    expect(remove).toHaveBeenCalledWith("token", ID)
     expect(response.status).toBe(204)
   })
 
   it("reicht Directus-Verbote als 403 durch", async () => {
     const response = await handleDeleteEntry(
-      "e1",
+      ID,
       "token",
       vi.fn().mockRejectedValue(createDirectusError(403))
     )
@@ -112,6 +137,18 @@ describe("Lese-Handler", () => {
       vi.fn()
     )
     expect(response.status).toBe(400)
+  })
+
+  it("lehnt Nicht-Kalendertage als Woche mit 400 ab", async () => {
+    const list = vi.fn()
+    const response = await handleListEntries(
+      new URL("http://x/api/time-entries?week=2026-99-99"),
+      "token",
+      list
+    )
+    expect(response.status).toBe(400)
+    expect(await response.json()).toEqual({ error: "invalid_week" })
+    expect(list).not.toHaveBeenCalled()
   })
 
   it("liefert die gebuchten Aufgaben", async () => {

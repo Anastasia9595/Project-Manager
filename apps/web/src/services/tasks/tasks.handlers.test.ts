@@ -2,6 +2,8 @@ import { describe, expect, it, vi } from "vitest"
 
 import { handleUpdateTask } from "@/services/tasks/tasks.handlers"
 
+const ID = "3f2b8c1e-9a4d-4e6f-8b7a-1c2d3e4f5a6b"
+
 const request = (body: unknown) =>
   new Request("http://x/api/tasks/t1", {
     method: "PATCH",
@@ -10,23 +12,21 @@ const request = (body: unknown) =>
 
 describe("handleUpdateTask", () => {
   it("speichert den Erledigt-Status und antwortet mit completedAt", async () => {
-    const update = vi
-      .fn()
-      .mockResolvedValue({
-        id: "t1",
-        completed: true,
-        completedAt: "2026-11-05T10:00:00.000Z",
-      })
+    const update = vi.fn().mockResolvedValue({
+      id: ID,
+      completed: true,
+      completedAt: "2026-11-05T10:00:00.000Z",
+    })
     const response = await handleUpdateTask(
       request({ completed: true }),
-      "t1",
+      ID,
       "token",
       update
     )
-    expect(update).toHaveBeenCalledWith("token", "t1", true)
+    expect(update).toHaveBeenCalledWith("token", ID, true)
     expect(response.status).toBe(200)
     expect(await response.json()).toEqual({
-      id: "t1",
+      id: ID,
       completed: true,
       completedAt: "2026-11-05T10:00:00.000Z",
     })
@@ -37,7 +37,7 @@ describe("handleUpdateTask", () => {
     for (const body of [null, {}, { completed: "ja" }, []]) {
       const response = await handleUpdateTask(
         request(body),
-        "t1",
+        ID,
         "token",
         update
       )
@@ -51,10 +51,23 @@ describe("handleUpdateTask", () => {
     const update = vi.fn().mockRejectedValue(new Error("down"))
     const response = await handleUpdateTask(
       request({ completed: false }),
-      "t1",
+      ID,
       "token",
       update
     )
     expect(response.status).toBe(502)
+  })
+
+  it("lehnt ungültige ids mit 400 ab, ohne Directus aufzurufen", async () => {
+    const update = vi.fn()
+    const response = await handleUpdateTask(
+      request({ completed: true }),
+      "t1",
+      "token",
+      update
+    )
+    expect(response.status).toBe(400)
+    expect(await response.json()).toEqual({ error: "invalid_id" })
+    expect(update).not.toHaveBeenCalled()
   })
 })

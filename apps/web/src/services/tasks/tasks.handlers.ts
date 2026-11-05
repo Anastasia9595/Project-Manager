@@ -1,4 +1,5 @@
 import { toErrorResponse } from "@/lib/customer-contact-form/error-response"
+import { isUuid } from "@/utils/is-uuid"
 import { jsonResponse } from "@/utils/json-response"
 import { readJsonBody } from "@/utils/read-json-body"
 
@@ -20,6 +21,7 @@ export async function handleUpdateTask(
   accessToken: string,
   update: typeof updateTaskCompletion = updateTaskCompletion
 ): Promise<Response> {
+  if (!isUuid(id)) return jsonResponse(400, { error: "invalid_id" })
   const body = await readJsonBody<unknown>(request)
   if (!isCompletionBody(body))
     return jsonResponse(400, { error: "invalid_body" })
