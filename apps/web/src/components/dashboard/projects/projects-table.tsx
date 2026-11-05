@@ -96,7 +96,8 @@ const baseColumns: ColumnDef<Project, unknown>[] = [
   },
   {
     id: "progress",
-    accessorFn: (row) => row.progress.done / row.progress.total,
+    accessorFn: (row) =>
+      row.progress.total === 0 ? 0 : row.progress.done / row.progress.total,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Fortschritt" />
     ),

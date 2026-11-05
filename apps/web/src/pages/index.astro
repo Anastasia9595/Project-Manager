@@ -36,7 +36,7 @@ const customerContacts = allCustomerContacts.slice(0, 5)
     </h1>
     <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22.5rem]">
       <div class="flex min-w-0 flex-col gap-6">
-        <ProjectStats client:load projects={projects} />
+        <ProjectStats projects={projects} />
         <ProjectsTable
           client:load
           projects={projects}

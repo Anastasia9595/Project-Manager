@@ -34,8 +34,6 @@ import type { Project } from "@/models/project"
 import type { TrackedTask } from "@/models/task"
 import { fillTemplate } from "@/utils/fill-template"
 
-// Die Daten kommen per Props rein (Default: Dummy-Daten). Für die API-Anbindung
-// Directus-Daten auf `TrackedTask` (inkl. Zeiteinträgen) und `Project` mappen.
 // "In Bearbeitung" ergibt sich aus der Zeiterfassung (siehe `getStartedTaskIds`).
 export function CalendarPage({
   locale,

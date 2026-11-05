@@ -19,7 +19,7 @@ export type TimeEntry = {
 
 /** Aufgabe mit Kunde und Zeiterfassung - Grundlage der Aufgaben-Seite. */
 export type TrackedTask = Task & {
-  /** Verweis auf `Project.id` (in Directus: Relation `project`). */
+  /** Verweis auf `Project.id` (in Directus: Relation `printing_lines`). */
   projectId: string
   customer: string
   timeEntries: TimeEntry[]
