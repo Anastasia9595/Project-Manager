@@ -6,11 +6,8 @@ import {
   type SubmitEvent,
 } from "react"
 
-import {
-  applyProject,
-  applyTemplate,
-} from "@/components/tasks/new-task/form-helpers"
 import { toDayKey } from "@/lib/week"
+import { applyProject, applyTemplate } from "@/services/tasks/new-task.prefill"
 import type { TaskOptions } from "@/services/tasks/new-task.types"
 import {
   validateNewTask,
