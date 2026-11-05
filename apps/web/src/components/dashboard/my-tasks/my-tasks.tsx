@@ -32,19 +32,18 @@ export function MyTasks({
     tasks.filter((task) => isSameDay(task.dueDate, selectedDate))
   )
 
-  function flipTask(id: string) {
+  function setDone(id: string, done: boolean) {
     setTasks((current) =>
-      current.map((task) =>
-        task.id === id ? { ...task, done: !task.done } : task
-      )
+      current.map((task) => (task.id === id ? { ...task, done } : task))
     )
   }
 
   function toggleTask(id: string) {
     const task = tasks.find((candidate) => candidate.id === id)
     if (!task) return
-    flipTask(id)
-    void saveCompletion(id, !task.done, () => flipTask(id))
+    const previousDone = task.done
+    setDone(id, !previousDone)
+    void saveCompletion(id, !previousDone, () => setDone(id, previousDone))
   }
 
   return (

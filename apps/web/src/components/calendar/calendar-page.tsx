@@ -103,6 +103,17 @@ export function CalendarPage({
     )
   }
 
+  // Stellt den Stand vor dem Abhaken exakt wieder her (inkl. Abschlusszeit).
+  function restoreTask(previous: TrackedTask) {
+    setTasks((current) =>
+      current.map((task) =>
+        task.id === previous.id
+          ? { ...task, done: previous.done, completedAt: previous.completedAt }
+          : task
+      )
+    )
+  }
+
   function toggleTask(taskId: string) {
     const task = tasks.find((candidate) => candidate.id === taskId)
     if (!task) return
@@ -113,15 +124,15 @@ export function CalendarPage({
       // Läuft der Timer für diese Aufgabe, Zeit buchen statt weiterlaufen lassen.
       if (activeTimer?.taskId === taskId) stopTimer()
       setTaskDone(taskId, true)
-      void saveCompletion(taskId, true, () => setTaskDone(taskId, false))
+      void saveCompletion(taskId, true, () => restoreTask(task))
     }
   }
 
   function confirmReopen() {
     if (taskToReopen) {
-      const id = taskToReopen.id
-      setTaskDone(id, false)
-      void saveCompletion(id, false, () => setTaskDone(id, true))
+      const previous = taskToReopen
+      setTaskDone(previous.id, false)
+      void saveCompletion(previous.id, false, () => restoreTask(previous))
     }
     setTaskToReopen(null)
   }
