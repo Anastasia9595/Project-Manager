@@ -43,6 +43,13 @@ const lookup = {
   contactTenant: null,
 }
 
+function directusError(status: number) {
+  return Object.assign(new Error("Secret X"), {
+    errors: [{ message: "Secret X", extensions: { code: "SOME_CODE" } }],
+    response: { status },
+  })
+}
+
 function deps(overrides = {}) {
   return {
     fetchLookup: vi.fn().mockResolvedValue(lookup),
@@ -66,9 +73,11 @@ describe("handleCreateProject", () => {
   })
 
   it("lehnt kaputte Bodys mit 400 invalid_body ab", async () => {
-    const response = await handleCreateProject(post("{nope"), agency, deps())
+    const d = deps()
+    const response = await handleCreateProject(post("{nope"), agency, d)
     expect(response.status).toBe(400)
     expect(await response.json()).toEqual({ error: "invalid_body" })
+    expect(d.create).not.toHaveBeenCalled()
   })
 
   it("meldet Feldfehler mit 400 invalid_fields", async () => {
@@ -110,6 +119,7 @@ describe("handleCreateProject", () => {
     )
     expect(response.status).toBe(400)
     expect(await response.json()).toEqual({ error: "invalid_contact" })
+    expect(d.create).not.toHaveBeenCalled()
   })
 
   it("legt das Projekt an und antwortet mit 201", async () => {
@@ -128,6 +138,59 @@ describe("handleCreateProject", () => {
       "2026-11-05"
     )
   })
+
+  it("antwortet mit 403 vor dem Parsen eines kaputten Bodys", async () => {
+    const response = await handleCreateProject(
+      post("{nope"),
+      session("Kunden"),
+      deps()
+    )
+    expect(response.status).toBe(403)
+  })
+
+  it.each([403, 404])(
+    "mappt Directus-%i im Lookup auf invalid_reference",
+    async (status) => {
+      const d = deps({
+        fetchLookup: vi.fn().mockRejectedValue(directusError(status)),
+      })
+      const spy = vi.spyOn(console, "error").mockImplementation(() => {})
+      const response = await handleCreateProject(post(values), agency, d)
+      spy.mockRestore()
+      expect(response.status).toBe(400)
+      expect(await response.json()).toEqual({ error: "invalid_reference" })
+      expect(d.create).not.toHaveBeenCalled()
+    }
+  )
+
+  it("reicht Directus-500 im Lookup als 502 durch", async () => {
+    const d = deps({
+      fetchLookup: vi.fn().mockRejectedValue(directusError(500)),
+    })
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {})
+    const response = await handleCreateProject(post(values), agency, d)
+    spy.mockRestore()
+    expect(response.status).toBe(502)
+  })
+
+  it.each([
+    [422, 400, "create_failed"],
+    [500, 502, "unavailable"],
+  ])(
+    "mappt Directus-%i in create auf %i ohne Geheimtext im Log",
+    async (status, expected, code) => {
+      const d = deps({
+        create: vi.fn().mockRejectedValue(directusError(status)),
+      })
+      const spy = vi.spyOn(console, "error").mockImplementation(() => {})
+      const response = await handleCreateProject(post(values), agency, d)
+      const logged = JSON.stringify(spy.mock.calls)
+      spy.mockRestore()
+      expect(response.status).toBe(expected)
+      expect(await response.json()).toEqual({ error: code })
+      expect(logged).not.toContain("Secret X")
+    }
+  )
 
   it("antwortet bei Fehlern in create mit 502 ohne Inhalte", async () => {
     const d = deps({ create: vi.fn().mockRejectedValue(new Error("Secret X")) })
