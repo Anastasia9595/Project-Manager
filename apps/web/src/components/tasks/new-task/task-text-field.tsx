@@ -3,14 +3,13 @@ import { SettingsInput } from "@/components/settings/settings-input"
 import type { NewTaskFormState } from "@/hooks/use-new-task-form"
 import { getFieldMessage, type TaskFormTexts } from "./form-helpers"
 
-/** Einzeiliges Eingabefeld (Titel oder Datum) mit Label und Fehlermeldung. */
+/** Einzeiliges Eingabefeld (Titel) mit Label und Fehlermeldung. */
 export function TaskTextField({
   form,
   t,
   name,
   label,
   placeholder,
-  type,
   maxLength,
   required,
   autoFocus,
@@ -18,10 +17,9 @@ export function TaskTextField({
 }: {
   form: NewTaskFormState
   t: TaskFormTexts
-  name: "name" | "dueDate"
+  name: "name"
   label: string
   placeholder?: string
-  type?: "date"
   maxLength?: number
   required?: boolean
   autoFocus?: boolean
@@ -39,7 +37,6 @@ export function TaskTextField({
       {(id, aria) => (
         <SettingsInput
           id={id}
-          type={type}
           autoFocus={autoFocus}
           autoComplete="off"
           maxLength={maxLength}

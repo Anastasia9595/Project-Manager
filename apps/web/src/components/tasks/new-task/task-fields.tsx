@@ -11,6 +11,7 @@ import {
   toTemplateOptions,
   type TaskFormTexts,
 } from "./form-helpers"
+import { TaskDateField } from "./task-date-field"
 import { TaskDescriptionField } from "./task-description-field"
 import { TaskSelectField } from "./task-select-field"
 import { TaskTextField } from "./task-text-field"
@@ -74,14 +75,7 @@ export function TaskFields({
         required
         className="sm:col-span-2"
       />
-      <TaskTextField
-        form={form}
-        t={t}
-        name="dueDate"
-        type="date"
-        label={t.dueDate}
-        required
-      />
+      <TaskDateField form={form} t={t} />
       <TaskSelectField
         form={form}
         t={t}

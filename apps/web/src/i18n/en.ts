@@ -185,6 +185,7 @@ export default {
       name: "Title",
       project: "Project",
       dueDate: "Due date",
+      calendarLocale: "en",
       priority: "Priority",
       taskDescription: "Description",
       priorities: {
@@ -199,6 +200,7 @@ export default {
         project: "Select project",
         projectNone: "No open projects available",
         priority: "Select priority",
+        dueDate: "Select date",
         description: "What needs to be done?",
       },
       validation: {

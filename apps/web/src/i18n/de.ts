@@ -185,6 +185,7 @@ const de = {
       name: "Titel",
       project: "Projekt",
       dueDate: "Fälligkeit",
+      calendarLocale: "de",
       priority: "Priorität",
       taskDescription: "Beschreibung",
       priorities: {
@@ -199,6 +200,7 @@ const de = {
         project: "Projekt auswählen",
         projectNone: "Keine offenen Projekte vorhanden",
         priority: "Priorität auswählen",
+        dueDate: "Datum auswählen",
         description: "Was ist zu tun?",
       },
       validation: {
