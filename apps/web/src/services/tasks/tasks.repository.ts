@@ -1,4 +1,4 @@
-import { readItems } from "@directus/sdk"
+import { readItems, updateItem } from "@directus/sdk"
 
 import type { TrackedTask } from "@/models/task"
 import { createUserClient } from "@/services/directus/client"
@@ -39,4 +39,26 @@ export async function fetchMyTasks(
     })
   )) as unknown as TaskItemRow[]
   return toTrackedTasks(rows)
+}
+
+/** Setzt den Erledigt-Status; `completed_at` wird mit gesetzt bzw. geleert. Directus prüft, ob die Person die Aufgabe ändern darf. */
+export async function updateTaskCompletion(
+  accessToken: string,
+  id: string,
+  completed: boolean
+): Promise<{ id: string; completed: boolean; completedAt: string | null }> {
+  const client = await createUserClient(accessToken)
+  const row = (await client.request(
+    updateItem(
+      "tasks",
+      id,
+      { completed, completed_at: completed ? new Date().toISOString() : null },
+      { fields: ["id", "completed", "completed_at"] }
+    )
+  )) as unknown as {
+    id: string
+    completed: boolean
+    completed_at: string | null
+  }
+  return { id: row.id, completed: row.completed, completedAt: row.completed_at }
 }
