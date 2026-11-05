@@ -82,6 +82,7 @@ export function TaskFields({
         name="priority"
         label={t.priority}
         options={priorities}
+        placeholder=""
         // Ohne Leer-Eintrag liefert die Auswahl immer eine der Prioritäten.
         onValueChange={(next) =>
           form.setField("priority", next as TaskPriority)
