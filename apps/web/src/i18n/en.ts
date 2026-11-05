@@ -126,6 +126,8 @@ export default {
           "The selected contact person doesn't belong to this customer. Choose a different contact person.",
         saveError:
           "The project could not be created. Check your connection and try again.",
+        timeout:
+          "Saving is taking unusually long. Check the project list before you try again.",
       },
       loading: "Loading customers, media types and printing companies …",
       optionsError:

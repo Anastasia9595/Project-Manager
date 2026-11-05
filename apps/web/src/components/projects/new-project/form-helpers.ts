@@ -91,6 +91,9 @@ export function getSubmitErrorMessage(
       return errors.invalidVariant
     case "invalid_contact":
       return errors.invalidContact
+    // Bei Netzwerkfehler/Zeitüberschreitung kann das Projekt trotzdem angelegt sein.
+    case "network_error":
+      return errors.timeout
     default:
       return errors.saveError
   }
