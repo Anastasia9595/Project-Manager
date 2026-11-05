@@ -263,6 +263,7 @@ const de = {
   calendarPage: {
     title: "Kalender",
     subtitle: "Fristen und Termine im Überblick",
+    saveError: "Die Aufgabe konnte nicht gespeichert werden.",
     views: {
       month: "Monat",
       week: "Woche",
@@ -432,6 +433,7 @@ const de = {
     myTasks: {
       title: "Meine Aufgaben",
       noTasks: "Keine Aufgaben zu erledigen.",
+      saveError: "Die Aufgabe konnte nicht gespeichert werden.",
     },
     weeklyWorkTime: {
       title: "Wöchentliche Arbeitszeit",

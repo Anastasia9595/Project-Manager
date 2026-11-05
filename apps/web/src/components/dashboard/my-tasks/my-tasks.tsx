@@ -1,7 +1,9 @@
 "use client"
 
+import { Toaster } from "@workspace/ui/components/sonner"
 import { useState } from "react"
 
+import { useTaskCompletion } from "@/hooks/use-task-completion"
 import { sortByPriority } from "@/lib/tasks"
 import { formatDayLabel, isSameDay, startOfWeek } from "@/lib/week"
 import type { Task } from "@/models/task"
@@ -10,10 +12,16 @@ import { TaskWeekStrip } from "./task-week-strip"
 
 type MyTasksProps = {
   tasks: Task[]
+  saveError: string
   className?: string
 }
 
-export function MyTasks({ tasks: initialTasks, className = "" }: MyTasksProps) {
+export function MyTasks({
+  tasks: initialTasks,
+  saveError,
+  className = "",
+}: MyTasksProps) {
+  const saveCompletion = useTaskCompletion(saveError)
   const [today] = useState(() => new Date())
   const [selectedDate, setSelectedDate] = useState(today)
   const [weekStart, setWeekStart] = useState(() => startOfWeek(today))
@@ -24,13 +32,19 @@ export function MyTasks({ tasks: initialTasks, className = "" }: MyTasksProps) {
     tasks.filter((task) => isSameDay(task.dueDate, selectedDate))
   )
 
-  // TODO: Erledigt-Status in Directus speichern, aktuell nur lokal.
-  function toggleTask(id: string) {
+  function flipTask(id: string) {
     setTasks((current) =>
       current.map((task) =>
         task.id === id ? { ...task, done: !task.done } : task
       )
     )
+  }
+
+  function toggleTask(id: string) {
+    const task = tasks.find((candidate) => candidate.id === id)
+    if (!task) return
+    flipTask(id)
+    void saveCompletion(id, !task.done, () => flipTask(id))
   }
 
   return (
@@ -68,6 +82,7 @@ export function MyTasks({ tasks: initialTasks, className = "" }: MyTasksProps) {
           </ul>
         )}
       </div>
+      <Toaster />
     </section>
   )
 }

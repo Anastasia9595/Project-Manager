@@ -6,6 +6,7 @@ import {
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Button } from "@workspace/ui/components/button"
+import { Toaster } from "@workspace/ui/components/sonner"
 import { useEffect, useState } from "react"
 
 import { CalendarDayView } from "@/components/calendar/calendar-day-view"
@@ -14,6 +15,7 @@ import { CalendarViewSwitch } from "@/components/calendar/calendar-view-switch"
 import { ConfirmDialog } from "@/components/shared/confirm-dialog"
 import { PageHeader } from "@/components/shared/page-header"
 import { useNow } from "@/hooks/use-now"
+import { useTaskCompletion } from "@/hooks/use-task-completion"
 import { getDictionary } from "@/i18n"
 import {
   getStartedTaskIds,
@@ -45,6 +47,7 @@ export function CalendarPage({
   projects: Project[]
 }) {
   const labels = getDictionary(locale).calendarPage
+  const saveCompletion = useTaskCompletion(labels.saveError)
   const today = new Date(useNow(60_000))
   const [view, setView] = useState<CalendarView>("month")
   // Bezugsdatum der Ansicht; Monat/Woche/Tag ergeben sich daraus.
@@ -110,11 +113,16 @@ export function CalendarPage({
       // Läuft der Timer für diese Aufgabe, Zeit buchen statt weiterlaufen lassen.
       if (activeTimer?.taskId === taskId) stopTimer()
       setTaskDone(taskId, true)
+      void saveCompletion(taskId, true, () => setTaskDone(taskId, false))
     }
   }
 
   function confirmReopen() {
-    if (taskToReopen) setTaskDone(taskToReopen.id, false)
+    if (taskToReopen) {
+      const id = taskToReopen.id
+      setTaskDone(id, false)
+      void saveCompletion(id, false, () => setTaskDone(id, true))
+    }
     setTaskToReopen(null)
   }
 
@@ -227,6 +235,7 @@ export function CalendarPage({
         confirmLabel={labels.reopenDialog.confirm}
         cancelLabel={labels.reopenDialog.cancel}
       />
+      <Toaster />
     </div>
   )
 }
