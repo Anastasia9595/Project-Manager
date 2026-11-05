@@ -180,12 +180,12 @@ export default {
     form: {
       title: "New task",
       description:
-        "Create a task for an ongoing project. A template pre-fills title, description and due date.",
+        "Create a task for an open project. A template pre-fills title, description and due date.",
       requiredNote: "Fields marked with * are required.",
       template: "Template",
       name: "Title",
       project: "Project",
-      dueDate: "Due date",
+      dueDate: "Due",
       calendarLocale: "en",
       priority: "Priority",
       taskDescription: "Description",
@@ -200,7 +200,6 @@ export default {
         name: "For example: Check print data",
         project: "Select project",
         projectNone: "No open projects available",
-        priority: "Select priority",
         dueDate: "Select date",
         description: "What needs to be done?",
       },
@@ -211,7 +210,7 @@ export default {
           dueDate: "Please select a due date.",
         },
         invalid: "Please select an entry from the list.",
-        invalidDate: "Please enter a valid date.",
+        invalidDate: "Please select a valid date.",
         tooLong: "The text is too long. Please shorten it.",
       },
       errors: {

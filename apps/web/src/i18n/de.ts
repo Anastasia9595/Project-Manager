@@ -180,12 +180,12 @@ const de = {
     form: {
       title: "Neue Aufgabe",
       description:
-        "Lege eine Aufgabe zu einem laufenden Projekt an. Eine Vorlage füllt Titel, Beschreibung und Fälligkeit vor.",
+        "Lege eine Aufgabe zu einem offenen Projekt an. Eine Vorlage füllt Titel, Beschreibung und Fälligkeit vor.",
       requiredNote: "Felder mit * sind Pflichtfelder.",
       template: "Vorlage",
       name: "Titel",
       project: "Projekt",
-      dueDate: "Fälligkeit",
+      dueDate: "Fällig am",
       calendarLocale: "de",
       priority: "Priorität",
       taskDescription: "Beschreibung",
@@ -200,7 +200,6 @@ const de = {
         name: "Zum Beispiel: Druckdaten prüfen",
         project: "Projekt auswählen",
         projectNone: "Keine offenen Projekte vorhanden",
-        priority: "Priorität auswählen",
         dueDate: "Datum auswählen",
         description: "Was ist zu tun?",
       },
@@ -211,7 +210,7 @@ const de = {
           dueDate: "Bitte wähle ein Fälligkeitsdatum aus.",
         },
         invalid: "Bitte wähle einen Eintrag aus der Liste aus.",
-        invalidDate: "Bitte gib ein gültiges Datum ein.",
+        invalidDate: "Bitte wähle ein gültiges Datum aus.",
         tooLong: "Der Text ist zu lang. Bitte kürze ihn.",
       },
       errors: {

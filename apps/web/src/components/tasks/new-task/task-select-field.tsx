@@ -23,7 +23,7 @@ export function TaskSelectField({
   name: "templateId" | "projectId" | "priority"
   label: string
   options: SelectOption[]
-  placeholder: string
+  placeholder?: string
   onValueChange: (value: string) => void
   emptyLabel?: string
   disabled?: boolean
