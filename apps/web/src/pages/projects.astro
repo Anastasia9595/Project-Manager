@@ -2,6 +2,7 @@
 import AppLayout from "@/layouts/app.astro"
 import { getDictionary } from "@/i18n"
 import { ProjectsPage } from "@/components/projects/projects-page"
+import { canViewInternalWork } from "@/lib/auth/roles"
 import { getRequestSession } from "@/lib/auth/request-session"
 import { fetchProjects } from "@/services/projects/projects.repository"
 
@@ -10,7 +11,9 @@ if (!session) return Astro.redirect("/login")
 
 const locale = Astro.currentLocale ?? "de"
 const dict = getDictionary(locale)
-const projects = await fetchProjects(session.tokens.accessToken)
+const projects = await fetchProjects(session.tokens.accessToken, {
+  includeHandover: canViewInternalWork(Astro.locals.user!.role),
+})
 ---
 
 <AppLayout title={dict.sidebar.projects}>

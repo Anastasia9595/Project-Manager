@@ -6,6 +6,7 @@ import { MyTasks } from "@/components/dashboard/my-tasks/my-tasks"
 import { WeeklyWorkTime } from "@/components/dashboard/work-time/weekly-work-time"
 import { CustomerContactsTable } from "@/components/dashboard/customer-contacts/customer-contacts-table"
 import { getDictionary } from "@/i18n"
+import { canViewInternalWork } from "@/lib/auth/roles"
 import { getRequestSession } from "@/lib/auth/request-session"
 import { fetchCustomerContacts } from "@/services/customer-contacts/customer-contacts.repository"
 import { fetchProjects } from "@/services/projects/projects.repository"
@@ -19,10 +20,11 @@ const dict = getDictionary(locale)
 const session = getRequestSession(Astro.cookies, Astro.locals)
 if (!session) return Astro.redirect("/login")
 const token = session.tokens.accessToken
+const internal = canViewInternalWork(user.role)
 const [projects, tasks, workWeek, allCustomerContacts] = await Promise.all([
-  fetchProjects(token),
-  fetchMyTasks(token),
-  fetchWorkWeek(token),
+  fetchProjects(token, { includeHandover: internal }),
+  internal ? fetchMyTasks(token) : [],
+  internal ? fetchWorkWeek(token) : [],
   fetchCustomerContacts(token),
 ])
 // Das Dashboard-Widget zeigt nur die ersten Kunden; die volle Liste steht unter /company-profile.
@@ -34,7 +36,11 @@ const customerContacts = allCustomerContacts.slice(0, 5)
     <h1 class="text-2xl font-bold text-foreground">
       {locale === "de" ? `Willkommen, ${user.name}` : `Welcome, ${user.name}`}
     </h1>
-    <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22.5rem]">
+    <div
+      class={internal
+        ? "grid gap-6 lg:grid-cols-[minmax(0,1fr)_22.5rem]"
+        : "grid gap-6"}
+    >
       <div class="flex min-w-0 flex-col gap-6">
         <ProjectStats projects={projects} />
         <ProjectsTable
@@ -43,13 +49,21 @@ const customerContacts = allCustomerContacts.slice(0, 5)
           title={dict.dashboard.myProjects.title}
         />
       </div>
-      <div class="relative">
-        <MyTasks client:load tasks={tasks} className="lg:absolute lg:inset-0" />
-      </div>
+      {
+        internal && (
+          <div class="relative">
+            <MyTasks
+              client:load
+              tasks={tasks}
+              className="lg:absolute lg:inset-0"
+            />
+          </div>
+        )
+      }
     </div>
     <div class="@container">
-      <div class="grid gap-6 @4xl:grid-cols-2">
-        <WeeklyWorkTime days={workWeek} />
+      <div class={internal ? "grid gap-6 @4xl:grid-cols-2" : "grid gap-6"}>
+        {internal && <WeeklyWorkTime days={workWeek} />}
         <CustomerContactsTable
           client:load
           compact
