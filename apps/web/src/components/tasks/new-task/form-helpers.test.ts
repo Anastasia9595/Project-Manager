@@ -158,6 +158,7 @@ describe("getSubmitErrorMessage", () => {
     expect(getSubmitErrorMessage("unauthorized", e)).toBe(e.sessionExpired)
     expect(getSubmitErrorMessage("forbidden", e)).toBe(e.forbidden)
     expect(getSubmitErrorMessage("invalid_project", e)).toBe(e.invalidProject)
-    expect(getSubmitErrorMessage("network_error", e)).toBe(e.saveError)
+    expect(getSubmitErrorMessage("network_error", e)).toBe(e.timeout)
+    expect(getSubmitErrorMessage("server_error", e)).toBe(e.saveError)
   })
 })

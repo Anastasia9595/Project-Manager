@@ -224,6 +224,8 @@ export default {
           "The selected project is no longer available. Choose a different project.",
         saveError:
           "The task could not be created. Check your connection and try again.",
+        timeout:
+          "Saving is taking unusually long. Check the task list before you try again.",
       },
       loading: "Loading projects and templates …",
       optionsError:

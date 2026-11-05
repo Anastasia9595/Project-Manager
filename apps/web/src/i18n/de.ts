@@ -224,6 +224,8 @@ const de = {
           "Das gewählte Projekt ist nicht mehr verfügbar. Wähle ein anderes Projekt.",
         saveError:
           "Die Aufgabe konnte nicht angelegt werden. Prüfe deine Verbindung und versuche es erneut.",
+        timeout:
+          "Das Speichern dauert ungewöhnlich lange. Prüfe die Aufgabenliste, bevor du es noch einmal versuchst.",
       },
       loading: "Projekte und Vorlagen werden geladen …",
       optionsError:

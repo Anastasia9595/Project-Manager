@@ -108,6 +108,9 @@ export function getSubmitErrorMessage(
       return errors.forbidden
     case "invalid_project":
       return errors.invalidProject
+    // Bei Netzwerkfehler/Zeitüberschreitung kann die Aufgabe trotzdem angelegt sein.
+    case "network_error":
+      return errors.timeout
     default:
       return errors.saveError
   }
