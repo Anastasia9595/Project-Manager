@@ -45,6 +45,93 @@ const de = {
       created: "Erstellt",
       completed: "Abgeschlossen",
     },
+    form: {
+      title: "Neues Projekt",
+      description:
+        "Lege eine Druckstrecke für einen bestehenden Kunden an. Die Projektnummer wird automatisch vergeben.",
+      requiredNote: "Felder mit * sind Pflichtfelder.",
+      projectSection: "Projekt",
+      scheduleSection: "Termine",
+      textsSection: "Texte",
+      name: "Projektname",
+      tenant: "Kunde",
+      tenantUser: "Kontaktperson",
+      mediaType: "Medientyp",
+      variant: "Variante",
+      printingCompany: "Druckerei",
+      circulation: "Auflage",
+      palDate: "PAL-Datum",
+      bufferDays: "Pufferzeit (Tage)",
+      deliveryType: "Lieferart",
+      deliveryDate: "Lieferdatum",
+      distributionDate: "Verteildatum",
+      validUntil: "Gültig bis",
+      projectDescription: "Beschreibung",
+      internalNotes: "Interne Notizen",
+      deliveryTypes: {
+        pal: "PAL",
+        delivery: "Lieferung",
+      },
+      placeholders: {
+        name: "Zum Beispiel: Herbstprospekt 2027",
+        tenant: "Kunde auswählen",
+        tenantUser: "Kontaktperson auswählen",
+        tenantUserNeedsTenant: "Zuerst Kunden auswählen",
+        tenantUserNone: "Keine Kontaktpersonen für diesen Kunden",
+        tenantUserEmpty: "Ohne Kontaktperson",
+        mediaType: "Medientyp auswählen",
+        variant: "Variante auswählen",
+        variantNeedsMediaType: "Zuerst Medientyp auswählen",
+        variantNone: "Keine Varianten für diesen Medientyp",
+        printingCompany: "Druckerei auswählen",
+        circulation: "50000",
+        bufferDays: "2",
+        deliveryType: "Lieferart auswählen",
+        deliveryTypeEmpty: "Ohne Lieferart",
+        description: "Worum geht es in diesem Projekt?",
+        internalNotes: "Nur für das Team sichtbar",
+      },
+      validation: {
+        required: {
+          name: "Bitte gib einen Projektnamen ein.",
+          tenantId: "Bitte wähle einen Kunden aus.",
+          mediaTypeId: "Bitte wähle einen Medientyp aus.",
+          variantId: "Bitte wähle eine Variante aus.",
+          printingCompanyId: "Bitte wähle eine Druckerei aus.",
+          circulation: "Bitte gib eine Auflage ein.",
+          palDate: "Bitte wähle ein PAL-Datum aus.",
+        },
+        invalid: "Bitte wähle einen Eintrag aus der Liste aus.",
+        invalidCirculation:
+          "Bitte gib eine ganze Zahl zwischen 1 und 10.000.000 ein.",
+        invalidBufferDays:
+          "Bitte gib eine ganze Zahl zwischen 0 und 365 Tagen ein.",
+        invalidDate: "Bitte gib ein gültiges Datum ein.",
+        pastDate: "Das PAL-Datum darf nicht in der Vergangenheit liegen.",
+        tooLong: "Der Text ist zu lang. Bitte kürze ihn.",
+      },
+      errors: {
+        sessionExpired:
+          "Deine Sitzung ist abgelaufen. Melde dich erneut an und lege das Projekt dann noch einmal an.",
+        forbidden:
+          "Dir fehlt die Berechtigung, Projekte anzulegen. Wende dich an deine Administration.",
+        invalidVariant:
+          "Die gewählte Variante gehört nicht zu diesem Medientyp. Wähle eine andere Variante.",
+        invalidContact:
+          "Die gewählte Kontaktperson gehört nicht zu diesem Kunden. Wähle eine andere Kontaktperson.",
+        saveError:
+          "Das Projekt konnte nicht angelegt werden. Prüfe deine Verbindung und versuche es erneut.",
+      },
+      loading: "Kunden, Medientypen und Druckereien werden geladen …",
+      optionsError:
+        "Die Auswahllisten konnten nicht geladen werden. Prüfe deine Verbindung und versuche es erneut.",
+      retry: "Erneut laden",
+      save: "Projekt anlegen",
+      saving: "Wird angelegt …",
+      cancel: "Abbrechen",
+      close: "Schließen",
+      created: "Projekt „{name}“ wurde angelegt.",
+    },
   },
 
   tasksPage: {

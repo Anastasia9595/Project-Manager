@@ -1,6 +1,10 @@
 import { useMemo, useState } from "react"
+import { toast } from "sonner"
+
+import { Toaster } from "@workspace/ui/components/sonner"
 
 import { ProjectsTable } from "@/components/dashboard/projects/projects-table"
+import { NewProjectForm } from "@/components/projects/new-project/new-project-form"
 import {
   ProjectStatusFilter,
   type StatusFilterOption,
@@ -10,6 +14,7 @@ import { PageHeader } from "@/components/shared/page-header"
 import { SearchInput } from "@/components/shared/search-input"
 import { getDictionary } from "@/i18n"
 import type { Project, ProjectStatus } from "@/models/project"
+import { fillTemplate } from "@/utils/fill-template"
 
 function matchesQuery(project: Project, query: string): boolean {
   const needle = query.trim().toLowerCase()
@@ -25,17 +30,24 @@ type StatusFilter = "all" | Exclude<ProjectStatus, "paused">
 
 const PAGE_SIZE = 10
 
+/** Wartezeit bis zum Neuladen nach dem Anlegen, damit der Toast kurz sichtbar bleibt. */
+const RELOAD_DELAY_MS = 800
+
 const STATUS_FILTERS: StatusFilter[] = ["all", "active", "created", "completed"]
 
 export function ProjectsPage({
   locale,
   projects,
+  canCreate,
 }: {
   locale?: string
   projects: Project[]
+  /** Nur interne Rollen dürfen Projekte anlegen. */
+  canCreate: boolean
 }) {
   const dict = getDictionary(locale).projectsPage
   const [query, setQuery] = useState("")
+  const [formOpen, setFormOpen] = useState(false)
 
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all")
 
@@ -74,7 +86,12 @@ export function ProjectsPage({
               onChange={setQuery}
               placeholder={dict.searchPlaceholder}
             />
-            <CreateButton label={dict.newProject} />
+            {canCreate && (
+              <CreateButton
+                label={dict.newProject}
+                onClick={() => setFormOpen(true)}
+              />
+            )}
           </>
         }
       />
@@ -90,6 +107,20 @@ export function ProjectsPage({
         pageSize={PAGE_SIZE}
         paginationLabels={dict.pagination}
       />
+      {canCreate && (
+        <NewProjectForm
+          open={formOpen}
+          onClose={() => setFormOpen(false)}
+          onCreated={(name) => {
+            setFormOpen(false)
+            toast.success(fillTemplate(dict.form.created, { name }))
+            // Die Liste wird serverseitig geladen; ein Neuladen zeigt das neue Projekt.
+            window.setTimeout(() => window.location.reload(), RELOAD_DELAY_MS)
+          }}
+          t={dict.form}
+        />
+      )}
+      <Toaster position="bottom-right" />
     </div>
   )
 }
