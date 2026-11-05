@@ -56,8 +56,19 @@ export function toTimeEntryChanges(
 }
 
 const isTask = (value: unknown) => typeof value === "string" && value.length > 0
-const isDate = (value: unknown) =>
-  typeof value === "string" && DAY_KEY.test(value)
+function isCalendarDay(key: string): boolean {
+  const [y, m, d] = key.split("-").map(Number)
+  const date = new Date(Date.UTC(y, m - 1, d))
+  return (
+    date.getUTCFullYear() === y &&
+    date.getUTCMonth() === m - 1 &&
+    date.getUTCDate() === d
+  )
+}
+
+/** Gültiger Kalendertag `YYYY-MM-DD` (lehnt z.B. 2026-02-30 ab). */
+export const isDate = (value: unknown): value is string =>
+  typeof value === "string" && DAY_KEY.test(value) && isCalendarDay(value)
 const isDuration = (value: unknown) =>
   Number.isInteger(value) &&
   (value as number) >= 1 &&

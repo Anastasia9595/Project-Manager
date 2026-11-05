@@ -3,7 +3,11 @@ import { isUuid } from "@/utils/is-uuid"
 import { jsonResponse } from "@/utils/json-response"
 import { readJsonBody } from "@/utils/read-json-body"
 
-import { isBookingChanges, isWritableBooking } from "./time-entries.mapper"
+import {
+  isBookingChanges,
+  isDate,
+  isWritableBooking,
+} from "./time-entries.mapper"
 import {
   createTimeEntry,
   deleteTimeEntry,
@@ -11,18 +15,6 @@ import {
   fetchWeekEntries,
   updateTimeEntry,
 } from "./time-entries.repository"
-
-const DAY_KEY = /^\d{4}-\d{2}-\d{2}$/
-
-function isCalendarDay(key: string): boolean {
-  const [y, m, d] = key.split("-").map(Number)
-  const date = new Date(Date.UTC(y, m - 1, d))
-  return (
-    date.getUTCFullYear() === y &&
-    date.getUTCMonth() === m - 1 &&
-    date.getUTCDate() === d
-  )
-}
 
 const CONTEXT = "Directus time entries"
 
@@ -32,8 +24,7 @@ export async function handleListEntries(
   list: typeof fetchWeekEntries = fetchWeekEntries
 ): Promise<Response> {
   const week = url.searchParams.get("week") ?? ""
-  if (!DAY_KEY.test(week) || !isCalendarDay(week))
-    return jsonResponse(400, { error: "invalid_week" })
+  if (!isDate(week)) return jsonResponse(400, { error: "invalid_week" })
   try {
     return jsonResponse(200, { entries: await list(accessToken, week) })
   } catch (error) {

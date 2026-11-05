@@ -1,4 +1,5 @@
 import { useMemo } from "react"
+import { toast } from "sonner"
 import { Toaster } from "@workspace/ui/components/sonner"
 
 import { BookingForm } from "@/components/time-tracking/booking-form/booking-form"
@@ -52,7 +53,9 @@ export function TimeTrackingWorkspace({
   const weekStart = useSelectedWeek(initialWeek, today)
   const workdays = useMemo(() => getWorkweekDays(weekStart), [weekStart])
 
-  const bookings = useWeekBookings(userId, weekStart, today)
+  const bookings = useWeekBookings(userId, weekStart, today, () =>
+    toast.error(labels.toast.error)
+  )
   const startedTaskIds = useStartedTaskIds(tasks, bookings.bookedTaskIds)
   const overview = useWeekOverview({
     entries: bookings.entries,

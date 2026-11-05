@@ -101,6 +101,7 @@ describe("Body-Prüfung", () => {
     [[]],
     [{ ...ok, task: "" }],
     [{ ...ok, date: "04.11.2026" }],
+    [{ ...ok, date: "2026-02-30" }],
     [{ ...ok, duration_minutes: 0 }],
     [{ ...ok, duration_minutes: 1441 }],
     [{ ...ok, duration_minutes: 1.5 }],
@@ -112,5 +113,6 @@ describe("Body-Prüfung", () => {
   it("lehnt leere oder ungültige Änderungen ab", () => {
     expect(isBookingChanges({})).toBe(false)
     expect(isBookingChanges({ duration_minutes: -1 })).toBe(false)
+    expect(isBookingChanges({ date: "2026-02-30" })).toBe(false)
   })
 })

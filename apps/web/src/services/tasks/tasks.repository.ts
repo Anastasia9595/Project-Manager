@@ -34,6 +34,10 @@ export async function fetchMyTasks(
         assigned_to: { _eq: "$CURRENT_USER" },
         printing_lines: { status: { _neq: "cancelled" } },
       },
+      // Admins sehen sonst die Buchungen anderer Personen auf ihren Aufgaben.
+      deep: {
+        time_entries: { _filter: { user_created: { _eq: "$CURRENT_USER" } } },
+      },
       sort: ["due_date"],
       limit: -1,
     })
