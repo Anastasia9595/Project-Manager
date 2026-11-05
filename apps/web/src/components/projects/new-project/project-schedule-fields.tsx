@@ -8,6 +8,7 @@ import {
   isDeliveryType,
 } from "@/services/projects/new-project.values"
 import type { ProjectFormTexts } from "./form-helpers"
+import { ProjectDateField } from "./project-date-field"
 import { ProjectSelectField } from "./project-select-field"
 import { ProjectTextField } from "./project-text-field"
 
@@ -34,13 +35,12 @@ export function ProjectScheduleFields({
         {t.scheduleSection}
       </legend>
       <FormGrid>
-        <ProjectTextField
+        <ProjectDateField
           form={form}
           t={t}
           name="palDate"
-          type="date"
           label={t.palDate}
-          min={toDayKey(new Date())}
+          minDate={toDayKey(new Date())}
           required
         />
         <ProjectTextField
@@ -63,25 +63,22 @@ export function ProjectScheduleFields({
             form.setField("deliveryType", isDeliveryType(next) ? next : "")
           }
         />
-        <ProjectTextField
+        <ProjectDateField
           form={form}
           t={t}
           name="deliveryDate"
-          type="date"
           label={t.deliveryDate}
         />
-        <ProjectTextField
+        <ProjectDateField
           form={form}
           t={t}
           name="distributionDate"
-          type="date"
           label={t.distributionDate}
         />
-        <ProjectTextField
+        <ProjectDateField
           form={form}
           t={t}
           name="validUntil"
-          type="date"
           label={t.validUntil}
         />
       </FormGrid>

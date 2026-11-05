@@ -67,6 +67,8 @@ export default {
       deliveryDate: "Delivery date",
       distributionDate: "Distribution date",
       validUntil: "Valid until",
+      calendarLocale: "en",
+      clearDate: "Clear date",
       projectDescription: "Description",
       internalNotes: "Internal notes",
       deliveryTypes: {
@@ -87,6 +89,7 @@ export default {
         printingCompany: "Select printing company",
         circulation: "50000",
         bufferDays: "2",
+        date: "Select date",
         deliveryType: "Select delivery type",
         deliveryTypeEmpty: "No delivery type",
         description: "What is this project about?",

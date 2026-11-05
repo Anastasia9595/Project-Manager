@@ -66,6 +66,8 @@ const de = {
       deliveryDate: "Lieferdatum",
       distributionDate: "Verteildatum",
       validUntil: "Gültig bis",
+      calendarLocale: "de",
+      clearDate: "Datum entfernen",
       projectDescription: "Beschreibung",
       internalNotes: "Interne Notizen",
       deliveryTypes: {
@@ -86,6 +88,7 @@ const de = {
         printingCompany: "Druckerei auswählen",
         circulation: "50000",
         bufferDays: "2",
+        date: "Datum auswählen",
         deliveryType: "Lieferart auswählen",
         deliveryTypeEmpty: "Ohne Lieferart",
         description: "Worum geht es in diesem Projekt?",

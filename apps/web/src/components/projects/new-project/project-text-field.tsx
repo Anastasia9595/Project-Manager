@@ -14,16 +14,14 @@ type TextFieldName = Exclude<
   | "deliveryType"
 >
 
-/** Einzeiliges Eingabefeld (Text, Zahl oder Datum) mit Label und Fehlermeldung. */
+/** Einzeiliges Eingabefeld (Text oder Zahl) mit Label und Fehlermeldung. */
 export function ProjectTextField({
   form,
   t,
   name,
   label,
   placeholder,
-  type,
   inputMode,
-  min,
   maxLength,
   required,
   autoFocus,
@@ -34,9 +32,7 @@ export function ProjectTextField({
   name: TextFieldName
   label: string
   placeholder?: string
-  type?: "date"
   inputMode?: "numeric"
-  min?: string
   maxLength?: number
   required?: boolean
   autoFocus?: boolean
@@ -54,9 +50,7 @@ export function ProjectTextField({
       {(id, aria) => (
         <SettingsInput
           id={id}
-          type={type}
           inputMode={inputMode}
-          min={min}
           autoFocus={autoFocus}
           autoComplete="off"
           maxLength={maxLength}
