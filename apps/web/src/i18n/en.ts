@@ -49,7 +49,7 @@ export default {
     form: {
       title: "New project",
       description:
-        "Create a print run for an existing customer. The project number is assigned automatically.",
+        "Create a project for an existing customer. The project number is assigned automatically.",
       requiredNote: "Fields marked with * are required.",
       projectSection: "Project",
       scheduleSection: "Dates",
@@ -62,7 +62,7 @@ export default {
       printingCompany: "Printing company",
       circulation: "Circulation",
       palDate: "PAL date",
-      bufferDays: "Buffer (days)",
+      bufferDays: "Buffer until data handover (days)",
       deliveryType: "Delivery type",
       deliveryDate: "Delivery date",
       distributionDate: "Distribution date",
@@ -87,8 +87,8 @@ export default {
         variantNeedsMediaType: "Select a media type first",
         variantNone: "No variants for this media type",
         printingCompany: "Select printing company",
-        circulation: "50000",
-        bufferDays: "2",
+        circulation: "e.g. 50000",
+        bufferDays: "e.g. 2",
         date: "Select date",
         deliveryType: "Select delivery type",
         deliveryTypeEmpty: "No delivery type",
@@ -110,8 +110,9 @@ export default {
           "Please enter a whole number between 1 and 10,000,000.",
         invalidBufferDays:
           "Please enter a whole number between 0 and 365 days.",
-        invalidDate: "Please enter a valid date.",
-        pastDate: "The PAL date must not be in the past.",
+        invalidDate: "Please select a valid date.",
+        pastDate:
+          "The PAL date must not be in the past. Choose today or a later day.",
         tooLong: "The text is too long. Please shorten it.",
       },
       errors: {
@@ -129,7 +130,7 @@ export default {
       loading: "Loading customers, media types and printing companies …",
       optionsError:
         "The selection lists could not be loaded. Check your connection and try again.",
-      retry: "Reload",
+      retry: "Try again",
       save: "Create project",
       saving: "Creating …",
       cancel: "Cancel",
