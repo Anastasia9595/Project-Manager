@@ -5,6 +5,14 @@ import TimeTrackingHeader from "@/components/time-tracking/time-tracking-header.
 import { TimeTrackingWorkspace } from "@/components/time-tracking/time-tracking-workspace"
 import { WeekNavigation } from "@/components/time-tracking/week-navigation"
 import { WEEK_PARAM } from "@/lib/time-tracking/week-param"
+import { canViewInternalWork } from "@/lib/auth/roles"
+import { getRequestSession } from "@/lib/auth/request-session"
+import { fetchProjects } from "@/services/projects/projects.repository"
+import { fetchMyTasks } from "@/services/tasks/tasks.repository"
+
+const session = getRequestSession(Astro.cookies, Astro.locals)
+if (!session) return Astro.redirect("/login")
+if (!canViewInternalWork(Astro.locals.user!.role)) return Astro.redirect("/")
 
 const locale = Astro.currentLocale ?? "de"
 const dict = getDictionary(locale)
@@ -12,6 +20,10 @@ const labels = dict.timeTrackingPage
 // Woche aus `?week=2026-W42` – ungültige Werte zeigen die aktuelle Woche.
 const initialWeek = Astro.url.searchParams.get(WEEK_PARAM)
 const user = Astro.locals.user!
+const [projects, tasks] = await Promise.all([
+  fetchProjects(session.tokens.accessToken),
+  fetchMyTasks(session.tokens.accessToken),
+])
 ---
 
 <AppLayout title={dict.sidebar.timeTracking}>
@@ -24,6 +36,8 @@ const user = Astro.locals.user!
       locale={locale}
       initialWeek={initialWeek}
       userId={user.id}
+      projects={projects}
+      tasks={tasks}
     />
   </div>
 </AppLayout>
