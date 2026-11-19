@@ -15,7 +15,6 @@ import { useToday } from "@/hooks/use-today"
 import { useWeekBookings } from "@/hooks/use-week-bookings"
 import { useWeekOverview } from "@/hooks/use-week-overview"
 import { getDictionary } from "@/i18n"
-import { getIsoWeek } from "@/lib/calendar/calendar-view"
 import {
   getDefaultBookingDate,
   isBookableDay,
@@ -101,7 +100,6 @@ export function TimeTrackingWorkspace({
   return (
     <div className="flex flex-col gap-6">
       <WeekStatusCard
-        weekNumber={getIsoWeek(weekStart)}
         actualMinutes={overview.totals.week}
         targetMinutes={overview.totals.weekTarget}
         percent={progressPercent(
