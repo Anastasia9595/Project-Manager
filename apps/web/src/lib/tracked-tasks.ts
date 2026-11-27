@@ -123,3 +123,47 @@ export function matchesTaskQuery(task: TrackedTask, query: string): boolean {
     value.toLowerCase().includes(needle)
   )
 }
+
+/** Ausgewählte Werte je Kriterium; leer = nicht gefiltert. */
+export type TaskFilter = {
+  priority: string[]
+  project: string[]
+  customer: string[]
+}
+
+export const EMPTY_TASK_FILTER: TaskFilter = {
+  priority: [],
+  project: [],
+  customer: [],
+}
+
+export function matchesTaskFilter(
+  task: TrackedTask,
+  filter: TaskFilter
+): boolean {
+  const allows = (selected: string[], value: string) =>
+    selected.length === 0 || selected.includes(value)
+  return (
+    allows(filter.priority, task.priority) &&
+    allows(filter.project, task.projectId) &&
+    allows(filter.customer, task.customer)
+  )
+}
+
+export type FilterOption = { value: string; label: string; count: number }
+
+/** Fasst [Wert, Beschriftung]-Paare zu Optionen mit Anzahl zusammen, alphabetisch; leere entfallen. */
+export function countFilterOptions(
+  entries: [string, string][]
+): FilterOption[] {
+  const options = new Map<string, FilterOption>()
+  for (const [value, label] of entries) {
+    if (!value || !label) continue
+    const option = options.get(value)
+    if (option) option.count++
+    else options.set(value, { value, label, count: 1 })
+  }
+  return [...options.values()].sort((a, b) =>
+    a.label.localeCompare(b.label, "de")
+  )
+}

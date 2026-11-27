@@ -8,7 +8,9 @@ import {
   getRunningSeconds,
   getTimeSummary,
   groupTasksByDue,
+  matchesTaskFilter,
   matchesTaskQuery,
+  type TaskFilter,
   type TaskGroupKey,
 } from "@/lib/tracked-tasks"
 import type { TaskRow, TrackedTask } from "@/models/task"
@@ -19,7 +21,11 @@ export type RunningTimer = {
   seconds: number
 }
 
-export function useTrackedTasks(tasks: TrackedTask[], query: string) {
+export function useTrackedTasks(
+  tasks: TrackedTask[],
+  query: string,
+  filter: TaskFilter
+) {
   const active = useTaskTimerStore((state) => state.active)
   const bookedEntries = useTaskTimerStore((state) => state.entries)
 
@@ -46,7 +52,10 @@ export function useTrackedTasks(tasks: TrackedTask[], query: string) {
     : null
 
   const rows = buildTaskRows(
-    openTasks.filter((task) => matchesTaskQuery(task, query)),
+    openTasks.filter(
+      (task) =>
+        matchesTaskQuery(task, query) && matchesTaskFilter(task, filter)
+    ),
     allEntries,
     active,
     runningSeconds

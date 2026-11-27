@@ -10,10 +10,16 @@ const PRIORITY_LABEL: Record<TaskPriority, string> = {
 
 const PRIORITY_CLASSNAME: Record<TaskPriority, string> = {
   high: "border-transparent bg-destructive-tint text-destructive-dark",
-  medium: "border-transparent bg-warning-tint text-warning-dark",
+  medium: "border-transparent bg-warning-tint text-warning-on-tint",
   low: "border-transparent bg-success-tint text-success-dark",
 }
 
-export function TaskPriorityBadge({ priority }: { priority: TaskPriority }) {
-  return <Badge className={PRIORITY_CLASSNAME[priority]}>{PRIORITY_LABEL[priority]}</Badge>
+export function TaskPriorityBadge({
+  priority,
+  label = PRIORITY_LABEL[priority],
+}: {
+  priority: TaskPriority
+  label?: string
+}) {
+  return <Badge className={PRIORITY_CLASSNAME[priority]}>{label}</Badge>
 }

@@ -2,8 +2,8 @@ import type { ColumnDef } from "@tanstack/react-table"
 
 import { DataTableColumnHeader } from "@workspace/ui/components/data-table"
 
+import { TaskPriorityBadge } from "@/components/dashboard/my-tasks/task-priority-badge"
 import { TaskDueDateLabel } from "@/components/tasks/task-table/task-due-date-label"
-import { TaskPriorityDot } from "@/components/tasks/task-table/task-priority-dot"
 import { TaskTimerButton } from "@/components/tasks/task-table/task-timer-button"
 import { TaskTrackedTime } from "@/components/tasks/task-table/task-tracked-time"
 import type { Dictionary } from "@/i18n"
@@ -47,7 +47,7 @@ export function createTaskColumns(
         <DataTableColumnHeader column={column} title={columns.priority} />
       ),
       cell: ({ row }) => (
-        <TaskPriorityDot
+        <TaskPriorityBadge
           priority={row.original.priority}
           label={priority[row.original.priority]}
         />
