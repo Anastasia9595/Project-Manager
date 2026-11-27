@@ -11,10 +11,17 @@ import { RunningTimerBar } from "@/components/tasks/running-timer-bar"
 import { TaskGroup } from "@/components/tasks/task-group/task-group"
 import { createTaskColumns } from "@/components/tasks/task-table/task-columns"
 import { TasksEmptyState } from "@/components/tasks/tasks-empty-state"
+import { TaskBoard } from "@/components/tasks/view/task-board"
+import { TaskFilterBar } from "@/components/tasks/view/task-filter-bar"
+import {
+  TasksViewSwitch,
+  type TasksView,
+} from "@/components/tasks/view/tasks-view-switch"
 import { TimeSummaryCards } from "@/components/tasks/time-summary/time-summary-cards"
 import { useStopTimer } from "@/hooks/use-stop-timer"
 import { useTrackedTasks } from "@/hooks/use-tracked-tasks"
 import { getDictionary } from "@/i18n"
+import { EMPTY_TASK_FILTER } from "@/lib/tracked-tasks"
 import type { TrackedTask } from "@/models/task"
 import { fillTemplate } from "@/utils/fill-template"
 
@@ -31,12 +38,15 @@ export function TasksPage({
   const dict = getDictionary(locale).tasksPage
   const [query, setQuery] = useState("")
   const [formOpen, setFormOpen] = useState(false)
+  const [view, setView] = useState<TasksView>("list")
+  const [filter, setFilter] = useState(EMPTY_TASK_FILTER)
   const reloadTimer = useRef<number | undefined>(undefined)
   useEffect(() => () => window.clearTimeout(reloadTimer.current), [])
   const stopTimer = useStopTimer(dict.timer.bookError)
   const { openTaskCount, summary, runningTimer, groups } = useTrackedTasks(
     tasks,
-    query
+    query,
+    filter
   )
 
   const columns = useMemo(() => createTaskColumns(dict), [dict])
@@ -81,8 +91,20 @@ export function TasksPage({
         }}
       />
 
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <TaskFilterBar
+          tasks={tasks}
+          value={filter}
+          onChange={setFilter}
+          dict={dict}
+        />
+        <TasksViewSwitch value={view} onChange={setView} labels={dict} />
+      </div>
+
       {groups.length === 0 ? (
         <TasksEmptyState message={dict.noResults} />
+      ) : view === "kanban" ? (
+        <TaskBoard groups={groups} dict={dict} />
       ) : (
         groups.map((group) => (
           <TaskGroup

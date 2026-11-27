@@ -147,6 +147,16 @@ export default {
     newTask: "New task",
     noResults: "No tasks found.",
     hoursUnit: "h",
+    viewSwitch: "View",
+    views: { list: "List", kanban: "Kanban" },
+    emptyColumn: "No tasks",
+    filter: {
+      reset: "Reset",
+      search: "Search",
+      empty: "No matches",
+      count: "Tasks",
+      remove: "Remove filter: {name}",
+    },
     summary: {
       today: "Tracked today",
       week: "Tracked this week",

@@ -147,6 +147,16 @@ const de = {
     newTask: "Neue Aufgabe",
     noResults: "Keine Aufgaben gefunden.",
     hoursUnit: "Std.",
+    viewSwitch: "Ansicht",
+    views: { list: "Liste", kanban: "Kanban" },
+    emptyColumn: "Keine Aufgaben",
+    filter: {
+      reset: "Zurücksetzen",
+      search: "Suchen",
+      empty: "Keine Treffer",
+      count: "Aufgaben",
+      remove: "Filter entfernen: {name}",
+    },
     summary: {
       today: "Heute erfasst",
       week: "Diese Woche erfasst",
