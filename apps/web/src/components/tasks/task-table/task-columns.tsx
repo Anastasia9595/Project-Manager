@@ -32,12 +32,23 @@ export function createTaskColumns(
         <DataTableColumnHeader column={column} title={columns.project} />
       ),
       cell: ({ row }) => (
-        <div className="max-w-80" title={row.original.projectName}>
-          <span className="block truncate">{row.original.projectName}</span>
-          <span className="block truncate text-xs text-muted-foreground">
-            {row.original.customer}
-          </span>
-        </div>
+        <span
+          className="block max-w-80 truncate"
+          title={row.original.projectName}
+        >
+          {row.original.projectName}
+        </span>
+      ),
+    },
+    {
+      accessorKey: "customer",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title={columns.customer} />
+      ),
+      cell: ({ row }) => (
+        <span className="block max-w-60 truncate" title={row.original.customer}>
+          {row.original.customer}
+        </span>
       ),
     },
     {

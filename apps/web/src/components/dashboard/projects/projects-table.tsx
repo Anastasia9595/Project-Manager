@@ -65,9 +65,7 @@ const baseColumns: ColumnDef<Project, unknown>[] = [
     cell: ({ row }) => {
       const status = row.original.status
       return (
-        <Badge
-          className={`h-6 px-3 font-semibold uppercase ${STATUS_CLASSNAME[status]}`}
-        >
+        <Badge className={STATUS_CLASSNAME[status]}>
           {STATUS_LABEL[status]}
         </Badge>
       )

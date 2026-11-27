@@ -100,11 +100,11 @@
     /* Text in Tabellenzellen (Design: #6F7182, 4.9:1 auf Weiß) */
     --table-foreground: #6F7182;
     /* Projekt-Status-Badges (Design): Text/Punkt + Tint-Hintergrund */
-    --status-active: #38A12B;
+    --status-active: #2A7D20;
     --status-active-tint: #E9FEE9;
     --status-completed: #0023E7;
     --status-completed-tint: #E7E9FD;
-    --status-paused: #E48126;
+    --status-paused: #A65A10;
     --status-paused-tint: #FEF5E8;
     /* subtile Highlights / warme Flächen -> Soft Orange */
     --accent: oklch(0.882 0.075 65.943);
@@ -182,11 +182,11 @@
     /* #6F7182 hätte auf Ink nur ~3.5:1 - im Dark Mode daher heller */
     --table-foreground: oklch(0.716 0.009 56.259);
     /* Projekt-Status-Badges (Design): Text/Punkt + Tint-Hintergrund */
-    --status-active: #38A12B;
+    --status-active: #2A7D20;
     --status-active-tint: #E9FEE9;
     --status-completed: #0023E7;
     --status-completed-tint: #E7E9FD;
-    --status-paused: #E48126;
+    --status-paused: #A65A10;
     --status-paused-tint: #FEF5E8;
     /* abgedunkelte Orange-Fläche für Akzente auf dunklem Grund (#432609) */
     --accent: oklch(0.3 0.06 60.637);
