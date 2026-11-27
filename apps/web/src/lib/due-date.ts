@@ -3,6 +3,8 @@ export type DueTone = "overdue" | "today" | "upcoming"
 export type DueInfo = {
   label: string
   tone: DueTone
+  /** Hervorzuhebender Zusatz zum Datum, z.B. "vor 3 Tagen". */
+  note?: string
 }
 
 function startOfDay(date: Date): number {
@@ -39,18 +41,19 @@ export function formatShortDate(date: Date): string {
 }
 
 /**
- * Kurzes Fälligkeits-Label für Aufgaben-Tabellen:
- * überfällig -> "vor 3 Tagen", heute -> "heute", später -> Datum.
+ * Fälligkeits-Label für Liste und Kanban der Aufgaben, immer mit Datum:
+ * Datum als `label`; überfällig und heute zusätzlich mit `note`.
  */
 export function getRelativeDueInfo(date: Date, today: Date = new Date()): DueInfo {
   const diffDays = diffInCalendarDays(date, today)
 
   if (diffDays < 0) {
     const days = Math.abs(diffDays)
-    return { label: days === 1 ? "vor 1 Tag" : `vor ${days} Tagen`, tone: "overdue" }
+    const ago = days === 1 ? "vor 1 Tag" : `vor ${days} Tagen`
+    return { label: formatShortDate(date), note: ago, tone: "overdue" }
   }
   if (diffDays === 0) {
-    return { label: "heute", tone: "today" }
+    return { label: formatShortDate(date), note: "heute", tone: "today" }
   }
   return { label: formatShortDate(date), tone: "upcoming" }
 }
